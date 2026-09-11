@@ -1,0 +1,203 @@
+{
+  "home": {
+    "brandTagline": "معدات تجارية للمطاعم والمقاهي والمخابز",
+    "ticker": "وكيل معتمد • منتجات أصلية • تركيب احترافي • توصيل سريع",
+    "searchPlaceholder": "ابحث عن ماكينة، مطحنة، فرن…",
+    "search": "بحث",
+    "noResults": "لا توجد نتائج مطابقة لـ «{query}»",
+    "contactUs": "اتصل بنا",
+    "whatsapp": "واتساب",
+    "instantConsultation": "استشارة فورية",
+    "account": "حسابي",
+    "loginSoon": "تسجيل الدخول سيكون متاحًا قريبًا — تابعنا!",
+    "cart": {
+      "label": "السلة",
+      "close": "إغلاق السلة",
+      "title": "سلة التسوق",
+      "items": "{count} منتجًا",
+      "successTitle": "تم استلام طلبك بنجاح!",
+      "successDesc": "سيتواصل معك فريقنا خلال ساعات العمل لتأكيد التفاصيل وموعد التوصيل. رقم الطلب:",
+      "continue": "مواصلة التسوق",
+      "emptyTitle": "سلتك فارغة",
+      "emptyDesc": "تصفح أقسام المعدات وأضف ما يحتاجه مشروعك — الشحن مجاني للطلبات فوق {amount} ر.س",
+      "startShopping": "ابدأ التسوق",
+      "freeShippingRemaining": "أضف بقيمة {amount} ر.س للحصول على شحن مجاني",
+      "freeShippingDone": "تهانينا! الشحن مجاني لجميع المدن",
+      "increase": "زيادة الكمية",
+      "decrease": "تقليل الكمية",
+      "remove": "إزالة {name}",
+      "subtotal": "المجموع الفرعي",
+      "vat": "ضريبة القيمة المضافة 15%",
+      "shipping": "الشحن",
+      "calculatedAtShipping": "يُحسب عند الشحن",
+      "free": "مجاني",
+      "total": "الإجمالي",
+      "checkout": "إتمام الطلب",
+      "bankTransfer": "تحويل بنكي"
+    },
+    "cartCount": "السلة، {count} منتجًا",
+    "categories": "الأقسام",
+    "allCategories": "كل الأقسام",
+    "installments": "تقسيط متاح عبر تمارا",
+    "hero": {
+      "eyebrow": "وكيل معتمد • ضمان سنتان • قطع غيار أصلية •",
+      "trustOriginal": "منتجات أصلية ١٠٠٪",
+      "trustShipping": "شحن لكل مدن السعودية",
+      "trustService": "تركيب وتشغيل وصيانة",
+      "warehouse": "مستودعاتنا في الرياض وجدة — جاهزة للشحن الفوري",
+      "titleBefore": "جَهِّز",
+      "titleAccent": "مشروعك",
+      "titleAfter": "بالكامل",
+      "titleEnd": "من مكان واحد",
+      "description": "كل ما يحتاجه المطعم والكافيه والمخبز: مكائن إسبريسو، أفران، تبريد، قلي وحلويات — بوكالات معتمدة، وضمان حقيقي، وفريق يركّب ويشغّل معك.",
+      "shopSections": "تسوّق الأقسام",
+      "freeConsultation": "اطلب استشارة مجانية",
+      "lastShipment": "آخر شحنة وصلت",
+      "within48": "خلال ٤٨ ساعة",
+      "delivered": "سُلّمت",
+      "mostRequested": "الأكثر طلبًا هذا الأسبوع",
+      "projectsEquipped": "مشروعًا جُهّز معنا",
+      "quickShop": "تسوّق سريع:",
+      "heroImageAlt": "ماكينة إسبريسو تجارية في كافيه",
+      "featuredProduct": "فيوتزا ٢ جروب — ٥٨٬٠٠٠ ر.س"
+    },
+    "categoriesSection": {
+      "kicker": "أقسام تجاهيز",
+      "title": "تسوّق كل ما يحتاجه مشروعك",
+      "desc": "معدات المطاعم والمقاهي والمخابز في مكان واحد — بأسعار الوكلاء وبدون وسطاء.",
+      "viewAll": "عرض الكل",
+      "browse": "تصفّح القسم",
+      "previous": "السابق",
+      "next": "التالي",
+      "products": "{count} منتجًا",
+      "specialRequest": "لم تجد طلبك؟ نوفره لك بالطلب الخاص"
+    },
+    "promo": {
+      "fullSetup": "عرض التجهيز الكامل",
+      "orderPackage": "اطلب الباقة",
+      "coffee": {
+        "title": "ركن قهوة جاهز للتشغيل",
+        "sub": "ماكينة + مطحنة + تدريب باريستا ضمن باقة واحدة."
+      },
+      "grinders": {
+        "title": "اضبط طحنك بدقة الميكرون",
+        "sub": "مطاحن سنجل دوز ومطاحن خط إنتاج للذروة."
+      },
+      "cooling": {
+        "title": "تبريد يعمل بلا توقف",
+        "sub": "ضمان كومبريسور ٣ سنوات على كل ثلاجات العرض."
+      },
+      "cooking": {
+        "title": "خط مخبز متكامل",
+        "sub": "فرن + مخمّر + فردة عجين بتركيب مجاني."
+      },
+      "frying": {
+        "title": "قلي أسرع، زيت أنظف",
+        "sub": "مصارف زيت ومناطق باردة تطيل عمر الزيت."
+      },
+      "bakery": {
+        "title": "معمل حلويات من الصفر",
+        "sub": "عجانات وخفاقات بسعات تناسب نموّك."
+      },
+      "drinks": {
+        "title": "قائمة مشروبات الصيف",
+        "sub": "سلاش وبرادات عصير جاهزة قبل الموسم."
+      }
+    },
+    "projects": {
+      "kicker": "حسب نوع مشروعك",
+      "title": "تصفّح حسب المشروع",
+      "desc": "باقات جاهزة مدروسة — اختر نوع مشروعك وسنقترح عليك القائمة الكاملة بالمعدات والتكاليف.",
+      "products": "{count} منتجًا",
+      "prepare": "جهّز مشروعك"
+    },
+    "weekly": {
+      "kicker": "مختارات الأسبوع",
+      "title": "كل ما يحتاجه مشروعك في مكان واحد",
+      "desc": "وصل حديثًا من خطوط الإنتاج، والأكثر مبيعًا لدى عملائنا — بضمان الوكيل المعتمد.",
+      "new": "منتجات وصلت حديثًا",
+      "best": "الأكثر مبيعًا"
+    },
+    "brands": {
+      "kicker": "شركاؤنا التجاريون",
+      "title": "علامات نمثلها رسميًا في السعودية",
+      "all": "جميع الوكالات"
+    },
+    "why": {
+      "kicker": "مميزاتنا",
+      "title": "لماذا يتجهز الجميع مع تجاهيز؟",
+      "desc": "تجربة شراء مختلفة: جودة مضمونة بوكالات رسمية، سرعة توصيل لمستودعاتنا المحلية، وفريق فني لا يتركك بعد الفاتورة.",
+      "coldShipping": "شحن مبرد ومغلف للمعدات الحساسة",
+      "tracking": "تتبع مباشر حتى باب المحل",
+      "hours": "ساعة",
+      "quote": "«جهزنا كافيهين كاملين مع تجاهيز — من المخطط إلى أول كوب. ما احتجنا نتواصل مع مورد ثاني أبدًا.»",
+      "quoteAuthor": "عبدالله م. — صاحب سلسلة مقاهي، الرياض"
+    },
+    "cta": {
+      "title": "Have a project under preparation?",
+      "desc": "Send us your space and business type, and we’ll return an equipment list and estimated cost within one business day.",
+      "whatsapp": "واتساب مباشر"
+    },
+    "chat": {
+      "questions": [
+        "I need an equipment quote",
+        "Project setup consultation",
+        "Track an existing order",
+        "Are prices VAT inclusive?"
+      ],
+      "welcome": "Welcome to TAGAHAYEEZ! 👋 How can we help you today?",
+      "team": "TAGAHAYEEZ team",
+      "online": "Online now • replies within minutes",
+      "close": "إغلاق المحادثة",
+      "input": "Write your message…",
+      "send": "إرسال",
+      "whatsapp": "WhatsApp chat",
+      "help": "Need help? Message us",
+      "quoteReply": "Sure! Send us your equipment list or project photos and we’ll prepare a quote within one business hour 👌",
+      "consultReply": "Great! Share the business type, space and city — a project engineer will contact you today.",
+      "trackReply": "Send us your order number and we’ll check the shipment status right away.",
+      "vatReply": "Yes, all prices include 15% VAT and an official electronic invoice."
+    },
+    "mobile": {
+      "home": "الرئيسية",
+      "categories": "الأقسام",
+      "cart": "السلة",
+      "search": "بحث",
+      "why": "لماذا نحن",
+      "navigation": "تنقل الجوال"
+    },
+    "footer": {
+      "quickLinks": "روابط سريعة",
+      "home": "الرئيسية",
+      "allCategories": "كل الأقسام",
+      "offers": "العروض",
+      "brands": "العلامات التجارية",
+      "faq": "الأسئلة الشائعة",
+      "returns": "سياسة الاستبدال",
+      "topCategories": "أهم الأقسام",
+      "description": "The commercial equipment house in Saudi Arabia — from an espresso machine to a complete bakery line, with authorized agencies and a technical team that delivers to your door.",
+      "address": "Riyadh",
+      "hours": "Saturday – Thursday: 9 AM – 10 PM",
+      "newsletterTitle": "Equipment offers, first",
+      "newsletterDesc": "Subscribe for new arrivals, seasonal offers and operating tips from our experts.",
+      "subscribed": "Subscribed! Check your email to confirm activation.",
+      "email": "بريدك الإلكتروني",
+      "subscribe": "اشترك",
+      "copyright": "© 2025 TAGAHAYEEZ — All rights reserved",
+      "tax": "VAT number: 310123456700003 • CR 1010456789"
+    },
+    "product": {
+      "add": "إضافة للسلة",
+      "added": "تمّت الإضافة",
+      "special": "عرض خاص",
+      "new": "جديد",
+      "best": "الأكثر مبيعًا",
+      "discount": "{percent}% off",
+      "available": "متوفر",
+      "startsFrom": "يبدأ من",
+      "freeShipping": "توصيل مجاني",
+      "shipsAll": "يشحن لكل المدن",
+      "addedToast": "أُضيف «{name}» إلى السلة"
+    }
+  }
+}

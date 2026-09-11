@@ -1,0 +1,203 @@
+{
+  "home": {
+    "brandTagline": "Équipements professionnels pour restaurants, cafés et boulangeries",
+    "ticker": "وكيل معتمد • منتجات أصلية • تركيب احترافي • توصيل سريع",
+    "searchPlaceholder": "ابحث عن ماكينة، مطحنة، فرن…",
+    "search": "Rechercher",
+    "noResults": "لا توجد نتائج مطابقة لـ «{query}»",
+    "contactUs": "Nous contacter",
+    "whatsapp": "WhatsApp",
+    "instantConsultation": "Consultation instantanée",
+    "account": "Mon compte",
+    "loginSoon": "تسجيل الدخول سيكون متاحًا قريبًا — تابعنا!",
+    "cart": {
+      "label": "Panier",
+      "close": "إغلاق السلة",
+      "title": "سلة التسوق",
+      "items": "{count} items",
+      "successTitle": "Your order was received successfully!",
+      "successDesc": "Our team will contact you during business hours to confirm the details and delivery time. Order number:",
+      "continue": "Continue shopping",
+      "emptyTitle": "Your cart is empty",
+      "emptyDesc": "Browse equipment categories and add what your project needs — free shipping above {amount} SAR",
+      "startShopping": "ابدأ التسوق",
+      "freeShippingRemaining": "Add {amount} SAR to get free shipping",
+      "freeShippingDone": "Congratulations! Shipping is free to all cities",
+      "increase": "زيادة",
+      "decrease": "إنقاص",
+      "remove": "Remove {name}",
+      "subtotal": "المجموع الفرعي",
+      "vat": "VAT 15%",
+      "shipping": "الشحن",
+      "calculatedAtShipping": "يُحسب عند الشحن",
+      "free": "مجاني",
+      "total": "الإجمالي",
+      "checkout": "إتمام الطلب",
+      "bankTransfer": "تحويل بنكي"
+    },
+    "cartCount": "Cart, {count} products",
+    "categories": "Catégories",
+    "allCategories": "Toutes les catégories",
+    "installments": "تقسيط متاح عبر تمارا",
+    "hero": {
+      "eyebrow": "Official dealer • 2-year warranty • Genuine spare parts •",
+      "trustOriginal": "منتجات أصلية ١٠٠٪",
+      "trustShipping": "شحن لكل مدن السعودية",
+      "trustService": "تركيب وتشغيل وصيانة",
+      "warehouse": "Our Riyadh and Jeddah warehouses are ready for immediate shipping",
+      "titleBefore": "Equip your",
+      "titleAccent": "project",
+      "titleAfter": "completely",
+      "titleEnd": "from one place",
+      "description": "Everything a restaurant, café or bakery needs: espresso machines, ovens, refrigeration, frying and pastry equipment — with authorized agencies, real warranty and a team that installs and commissions with you.",
+      "shopSections": "تسوّق الأقسام",
+      "freeConsultation": "اطلب استشارة مجانية",
+      "lastShipment": "آخر شحنة وصلت",
+      "within48": "خلال ٤٨ ساعة",
+      "delivered": "سُلّمت",
+      "mostRequested": "الأكثر طلبًا هذا الأسبوع",
+      "projectsEquipped": "مشروعًا جُهّز معنا",
+      "quickShop": "تسوّق سريع:",
+      "heroImageAlt": "Machine à espresso professionnelle dans un café",
+      "featuredProduct": "Fiorza 2 groupes — 58 000 SAR"
+    },
+    "categoriesSection": {
+      "kicker": "TAGAHAYEEZ categories",
+      "title": "Shop everything your project needs",
+      "desc": "Restaurant, café and bakery equipment in one place — dealer pricing without middlemen.",
+      "viewAll": "Voir tout",
+      "browse": "Parcourir la catégorie",
+      "previous": "Précédent",
+      "next": "Suivant",
+      "products": "{count} products",
+      "specialRequest": "Vous ne trouvez pas votre produit ? Nous pouvons le fournir sur demande"
+    },
+    "promo": {
+      "fullSetup": "Offre d’équipement complète",
+      "orderPackage": "Demander le pack",
+      "coffee": {
+        "title": "Espace café prêt à exploiter",
+        "sub": "Machine + moulin + formation barista dans un seul pack."
+      },
+      "grinders": {
+        "title": "Une mouture précise au micron",
+        "sub": "Moulins single-dose et de production pour les pics."
+      },
+      "cooling": {
+        "title": "Un froid qui ne s’arrête jamais",
+        "sub": "Garantie compresseur de 3 ans sur les vitrines réfrigérées."
+      },
+      "cooking": {
+        "title": "Ligne de boulangerie complète",
+        "sub": "Four + étuve + laminoir avec installation offerte."
+      },
+      "frying": {
+        "title": "Friture plus rapide, huile plus propre",
+        "sub": "Vidanges et zones froides pour prolonger la durée de vie de l’huile."
+      },
+      "bakery": {
+        "title": "Laboratoire pâtisserie clé en main",
+        "sub": "Pétrins et batteurs adaptés à votre croissance."
+      },
+      "drinks": {
+        "title": "Carte des boissons d’été",
+        "sub": "Machines à granité et refroidisseurs prêts pour la saison."
+      }
+    },
+    "projects": {
+      "kicker": "By project type",
+      "title": "Browse by project",
+      "desc": "Curated ready-made packages — choose your project type and we’ll suggest the complete equipment list and estimated costs.",
+      "products": "{count} products",
+      "prepare": "Préparer votre projet"
+    },
+    "weekly": {
+      "kicker": "Weekly picks",
+      "title": "Everything your project needs in one place",
+      "desc": "New arrivals from production lines and customer best sellers — backed by authorized dealers.",
+      "new": "Nouveautés",
+      "best": "Meilleures ventes"
+    },
+    "brands": {
+      "kicker": "Our commercial partners",
+      "title": "Brands we officially represent in Saudi Arabia",
+      "all": "Toutes les agences"
+    },
+    "why": {
+      "kicker": "Our advantages",
+      "title": "Why does everyone equip with TAGAHAYEEZ?",
+      "desc": "A different buying experience: authorized quality, fast delivery from local warehouses, and a technical team that stays with you after the invoice.",
+      "coldShipping": "شحن مبرد ومغلف للمعدات الحساسة",
+      "tracking": "تتبع مباشر حتى باب المحل",
+      "hours": "ساعة",
+      "quote": "We equipped two complete cafés with TAGAHAYEEZ — from the plan to the first cup. We never needed another supplier.",
+      "quoteAuthor": "Abdullah M. — café chain owner, Riyadh"
+    },
+    "cta": {
+      "title": "Have a project under preparation?",
+      "desc": "Send us your space and business type, and we’ll return an equipment list and estimated cost within one business day.",
+      "whatsapp": "واتساب مباشر"
+    },
+    "chat": {
+      "questions": [
+        "I need an equipment quote",
+        "Project setup consultation",
+        "Track an existing order",
+        "Are prices VAT inclusive?"
+      ],
+      "welcome": "Welcome to TAGAHAYEEZ! 👋 How can we help you today?",
+      "team": "TAGAHAYEEZ team",
+      "online": "Online now • replies within minutes",
+      "close": "إغلاق المحادثة",
+      "input": "Write your message…",
+      "send": "إرسال",
+      "whatsapp": "WhatsApp chat",
+      "help": "Need help? Message us",
+      "quoteReply": "Sure! Send us your equipment list or project photos and we’ll prepare a quote within one business hour 👌",
+      "consultReply": "Great! Share the business type, space and city — a project engineer will contact you today.",
+      "trackReply": "Send us your order number and we’ll check the shipment status right away.",
+      "vatReply": "Yes, all prices include 15% VAT and an official electronic invoice."
+    },
+    "mobile": {
+      "home": "Accueil",
+      "categories": "Catégories",
+      "cart": "Panier",
+      "search": "Rechercher",
+      "why": "Pourquoi nous",
+      "navigation": "تنقل الجوال"
+    },
+    "footer": {
+      "quickLinks": "روابط سريعة",
+      "home": "Accueil",
+      "allCategories": "Toutes les catégories",
+      "offers": "العروض",
+      "brands": "العلامات التجارية",
+      "faq": "الأسئلة الشائعة",
+      "returns": "سياسة الاستبدال",
+      "topCategories": "أهم الأقسام",
+      "description": "The commercial equipment house in Saudi Arabia — from an espresso machine to a complete bakery line, with authorized agencies and a technical team that delivers to your door.",
+      "address": "Riyadh",
+      "hours": "Saturday – Thursday: 9 AM – 10 PM",
+      "newsletterTitle": "Equipment offers, first",
+      "newsletterDesc": "Subscribe for new arrivals, seasonal offers and operating tips from our experts.",
+      "subscribed": "Subscribed! Check your email to confirm activation.",
+      "email": "Votre e-mail",
+      "subscribe": "S’abonner",
+      "copyright": "© 2025 TAGAHAYEEZ — All rights reserved",
+      "tax": "VAT number: 310123456700003 • CR 1010456789"
+    },
+    "product": {
+      "add": "Ajouter au panier",
+      "added": "Ajouté",
+      "special": "عرض خاص",
+      "new": "جديد",
+      "best": "الأكثر مبيعًا",
+      "discount": "{percent}% off",
+      "available": "Disponible",
+      "startsFrom": "يبدأ من",
+      "freeShipping": "Livraison gratuite",
+      "shipsAll": "Expédition vers toutes les villes",
+      "addedToast": "« {name} » a été ajouté au panier"
+    }
+  }
+}

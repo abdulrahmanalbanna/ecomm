@@ -1,0 +1,203 @@
+{
+  "home": {
+    "brandTagline": "Commercial equipment for restaurants, cafés and bakeries",
+    "ticker": "Official dealer • Genuine products • Expert installation • Fast delivery",
+    "searchPlaceholder": "Search for an espresso machine, grinder, oven…",
+    "search": "Search",
+    "noResults": "No results match “{query}”",
+    "contactUs": "Contact us",
+    "whatsapp": "WhatsApp",
+    "instantConsultation": "Instant consultation",
+    "account": "My account",
+    "loginSoon": "Login will be available soon — stay tuned!",
+    "cart": {
+      "label": "Cart",
+      "close": "Close cart",
+      "title": "Shopping cart",
+      "items": "{count} items",
+      "successTitle": "Your order was received successfully!",
+      "successDesc": "Our team will contact you during business hours to confirm the details and delivery time. Order number:",
+      "continue": "Continue shopping",
+      "emptyTitle": "Your cart is empty",
+      "emptyDesc": "Browse equipment categories and add what your project needs — free shipping above {amount} SAR",
+      "startShopping": "Start shopping",
+      "freeShippingRemaining": "Add {amount} SAR to get free shipping",
+      "freeShippingDone": "Congratulations! Shipping is free to all cities",
+      "increase": "Increase",
+      "decrease": "Decrease",
+      "remove": "Remove {name}",
+      "subtotal": "Subtotal",
+      "vat": "VAT 15%",
+      "shipping": "Shipping",
+      "calculatedAtShipping": "Calculated at shipping",
+      "free": "Free",
+      "total": "Total",
+      "checkout": "Complete order",
+      "bankTransfer": "Bank transfer"
+    },
+    "cartCount": "Cart, {count} products",
+    "categories": "Categories",
+    "allCategories": "All categories",
+    "installments": "Installments available via Tamara",
+    "hero": {
+      "eyebrow": "Official dealer • 2-year warranty • Genuine spare parts •",
+      "trustOriginal": "100% genuine products",
+      "trustShipping": "Shipping to every Saudi city",
+      "trustService": "Installation, commissioning & maintenance",
+      "warehouse": "Our Riyadh and Jeddah warehouses are ready for immediate shipping",
+      "titleBefore": "Equip your",
+      "titleAccent": "project",
+      "titleAfter": "completely",
+      "titleEnd": "from one place",
+      "description": "Everything a restaurant, café or bakery needs: espresso machines, ovens, refrigeration, frying and pastry equipment — with authorized agencies, real warranty and a team that installs and commissions with you.",
+      "shopSections": "Shop categories",
+      "freeConsultation": "Request a free consultation",
+      "lastShipment": "Latest shipment arrived",
+      "within48": "within 48 hours",
+      "delivered": "delivered",
+      "mostRequested": "Most requested this week",
+      "projectsEquipped": "projects equipped with us",
+      "quickShop": "Quick shop:",
+      "heroImageAlt": "Commercial espresso machine in a café",
+      "featuredProduct": "Fiorza 2-group — SAR 58,000"
+    },
+    "categoriesSection": {
+      "kicker": "TAGAHAYEEZ categories",
+      "title": "Shop everything your project needs",
+      "desc": "Restaurant, café and bakery equipment in one place — dealer pricing without middlemen.",
+      "viewAll": "View all",
+      "browse": "Browse category",
+      "previous": "Previous",
+      "next": "Next",
+      "products": "{count} products",
+      "specialRequest": "Can’t find it? We can source it on request"
+    },
+    "promo": {
+      "fullSetup": "Complete setup offer",
+      "orderPackage": "Request package",
+      "coffee": {
+        "title": "Ready-to-run coffee corner",
+        "sub": "Machine + grinder + barista training in one package."
+      },
+      "grinders": {
+        "title": "Dial in to micron-level precision",
+        "sub": "Single-dose and production grinders for peak hours."
+      },
+      "cooling": {
+        "title": "Cooling that never stops",
+        "sub": "3-year compressor warranty on all display refrigerators."
+      },
+      "cooking": {
+        "title": "Complete bakery line",
+        "sub": "Oven + proofer + dough sheeter with free installation."
+      },
+      "frying": {
+        "title": "Faster frying, cleaner oil",
+        "sub": "Oil drains and cool zones extend oil life."
+      },
+      "bakery": {
+        "title": "Pastry lab from scratch",
+        "sub": "Mixers and beaters sized for your growth."
+      },
+      "drinks": {
+        "title": "Summer drinks menu",
+        "sub": "Slush and juice coolers ready before the season."
+      }
+    },
+    "projects": {
+      "kicker": "By project type",
+      "title": "Browse by project",
+      "desc": "Curated ready-made packages — choose your project type and we’ll suggest the complete equipment list and estimated costs.",
+      "products": "{count} products",
+      "prepare": "Prepare your project"
+    },
+    "weekly": {
+      "kicker": "Weekly picks",
+      "title": "Everything your project needs in one place",
+      "desc": "New arrivals from production lines and customer best sellers — backed by authorized dealers.",
+      "new": "New arrivals",
+      "best": "Best sellers"
+    },
+    "brands": {
+      "kicker": "Our commercial partners",
+      "title": "Brands we officially represent in Saudi Arabia",
+      "all": "All agencies"
+    },
+    "why": {
+      "kicker": "Our advantages",
+      "title": "Why does everyone equip with TAGAHAYEEZ?",
+      "desc": "A different buying experience: authorized quality, fast delivery from local warehouses, and a technical team that stays with you after the invoice.",
+      "coldShipping": "Insulated and protected shipping for sensitive equipment",
+      "tracking": "Live tracking to your shop",
+      "hours": "hours",
+      "quote": "We equipped two complete cafés with TAGAHAYEEZ — from the plan to the first cup. We never needed another supplier.",
+      "quoteAuthor": "Abdullah M. — café chain owner, Riyadh"
+    },
+    "cta": {
+      "title": "Have a project under preparation?",
+      "desc": "Send us your space and business type, and we’ll return an equipment list and estimated cost within one business day.",
+      "whatsapp": "Direct WhatsApp"
+    },
+    "chat": {
+      "questions": [
+        "I need an equipment quote",
+        "Project setup consultation",
+        "Track an existing order",
+        "Are prices VAT inclusive?"
+      ],
+      "welcome": "Welcome to TAGAHAYEEZ! 👋 How can we help you today?",
+      "team": "TAGAHAYEEZ team",
+      "online": "Online now • replies within minutes",
+      "close": "Close chat",
+      "input": "Write your message…",
+      "send": "Send",
+      "whatsapp": "WhatsApp chat",
+      "help": "Need help? Message us",
+      "quoteReply": "Sure! Send us your equipment list or project photos and we’ll prepare a quote within one business hour 👌",
+      "consultReply": "Great! Share the business type, space and city — a project engineer will contact you today.",
+      "trackReply": "Send us your order number and we’ll check the shipment status right away.",
+      "vatReply": "Yes, all prices include 15% VAT and an official electronic invoice."
+    },
+    "mobile": {
+      "home": "Home",
+      "categories": "Categories",
+      "cart": "Cart",
+      "search": "Search",
+      "why": "Why us",
+      "navigation": "Mobile navigation"
+    },
+    "footer": {
+      "quickLinks": "Quick links",
+      "home": "Home",
+      "allCategories": "All categories",
+      "offers": "Offers",
+      "brands": "Brands",
+      "faq": "FAQ",
+      "returns": "Return policy",
+      "topCategories": "Top categories",
+      "description": "The commercial equipment house in Saudi Arabia — from an espresso machine to a complete bakery line, with authorized agencies and a technical team that delivers to your door.",
+      "address": "Riyadh",
+      "hours": "Saturday – Thursday: 9 AM – 10 PM",
+      "newsletterTitle": "Equipment offers, first",
+      "newsletterDesc": "Subscribe for new arrivals, seasonal offers and operating tips from our experts.",
+      "subscribed": "Subscribed! Check your email to confirm activation.",
+      "email": "Your email",
+      "subscribe": "Subscribe",
+      "copyright": "© 2025 TAGAHAYEEZ — All rights reserved",
+      "tax": "VAT number: 310123456700003 • CR 1010456789"
+    },
+    "product": {
+      "add": "Add to cart",
+      "added": "Added",
+      "special": "Special offer",
+      "new": "New",
+      "best": "Best seller",
+      "discount": "{percent}% off",
+      "available": "Available",
+      "startsFrom": "Starting from",
+      "freeShipping": "Free delivery",
+      "shipsAll": "Ships to all cities",
+      "addedToast": "Added “{name}” to your cart"
+    }
+  }
+}
