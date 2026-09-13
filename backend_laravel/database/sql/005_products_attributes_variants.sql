@@ -252,6 +252,32 @@ COMMENT ON FUNCTION fn_chk_tags(TEXT[]) IS
     'Validates lowercase, non-empty, trimmed, duplicate-free tags.';
 
 -- ---------------------------------------------------------------------------
+-- 1.5) BRANDS
+-- ---------------------------------------------------------------------------
+
+CREATE TABLE brands (
+    id           BIGSERIAL,
+    slug         VARCHAR(200) NOT NULL,
+    name         VARCHAR(200) NOT NULL,
+    logo_url     TEXT,
+    website_url  TEXT,
+    description  TEXT,
+    is_active    BOOLEAN      NOT NULL DEFAULT TRUE,
+    is_featured  BOOLEAN      NOT NULL DEFAULT FALSE,
+    created_at   TIMESTAMPTZ  NOT NULL DEFAULT now(),
+    updated_at   TIMESTAMPTZ  NOT NULL DEFAULT now(),
+
+    CONSTRAINT brands_pkey PRIMARY KEY (id),
+    CONSTRAINT brands_slug_key UNIQUE (slug),
+    CONSTRAINT brands_slug_format_check
+        CHECK (slug ~ '^[a-z0-9]+(-[a-z0-9]+)*$')
+);
+
+COMMENT ON TABLE brands IS 'Product brand registry.';
+COMMENT ON COLUMN brands.slug IS 'Unique lowercase kebab-case slug.';
+COMMENT ON COLUMN brands.is_active IS 'Active flag for catalog filtering.';
+
+-- ---------------------------------------------------------------------------
 -- 2) PRODUCTS
 -- ---------------------------------------------------------------------------
 
@@ -259,6 +285,7 @@ CREATE TABLE products (
     id                BIGSERIAL,
     public_id         UUID         NOT NULL DEFAULT gen_random_uuid(),
     category_id       BIGINT       NOT NULL,
+    brand_id          BIGINT,
     slug              VARCHAR(300) NOT NULL,
     name              VARCHAR(300) NOT NULL,
     description       TEXT,
@@ -283,6 +310,10 @@ CREATE TABLE products (
         FOREIGN KEY (category_id)
         REFERENCES categories(id)
         ON DELETE RESTRICT,
+    CONSTRAINT products_brand_id_fkey
+        FOREIGN KEY (brand_id)
+        REFERENCES brands(id)
+        ON DELETE SET NULL,
     CONSTRAINT products_slug_key UNIQUE (slug),
     CONSTRAINT products_slug_format_check
         CHECK (slug ~ '^[a-z0-9]+(-[a-z0-9]+)*$'),
@@ -506,6 +537,17 @@ COMMENT ON CONSTRAINT variants_sku_format_check ON product_variants IS
 
 CREATE INDEX idx_products_category_id
     ON products (category_id);
+
+CREATE INDEX idx_products_brand_id
+    ON products (brand_id);
+
+CREATE INDEX idx_brands_slug
+    ON brands (slug);
+
+CREATE INDEX idx_brands_featured
+    ON brands (id)
+    WHERE is_featured = TRUE
+      AND is_active = TRUE;
 
 CREATE INDEX idx_products_featured
     ON products (id)

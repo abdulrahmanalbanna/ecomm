@@ -109,19 +109,20 @@ DECLARE
     required_tables TEXT[] := ARRAY[
         'roles', 'permissions', 'role_permissions',
         'users', 'sessions', 'password_reset_tokens',
-        'customer_profiles', 'addresses',
+        'customer_profiles', 'cities', 'addresses',
         'categories',
-        'products', 'attribute_definitions', 'product_variants',
+        'brands', 'products', 'attribute_definitions', 'product_variants',
         'inventory', 'inventory_reservations',
-        'carts', 'cart_items',
+        'carts', 'cart_items', 'wishlists',
         'order_items',
         'shipping_methods', 'shipments',
         'payment_gateways', 'payments', 'payment_attempts',
         'payment_transactions', 'payment_webhook_events',
         'installment_plans', 'installments', 'refunds',
-        'coupons', 'coupon_usages',
+        'coupons', 'coupon_usages', 'banners',
         'product_reviews',
-        'notifications'
+        'notifications',
+        'business_settings'
     ];
     tname TEXT;
     exists_flag BOOLEAN;
@@ -306,6 +307,10 @@ DECLARE
         ARRAY['trg_refunds_updated_at',             'refunds'],
         ARRAY['trg_coupons_updated_at',             'coupons'],
         ARRAY['trg_product_reviews_updated_at',     'product_reviews'],
+        ARRAY['trg_business_settings_updated_at',    'business_settings'],
+        ARRAY['trg_cities_updated_at',               'cities'],
+        ARRAY['trg_brands_updated_at',               'brands'],
+        ARRAY['trg_banners_updated_at',              'banners'],
         ARRAY['trg_products_search_vector',         'products'],
         ARRAY['trg_reviews_search_vector',          'product_reviews'],
         ARRAY['trg_orders_status_transition',       'orders']

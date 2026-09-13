@@ -127,6 +127,26 @@ CREATE TRIGGER trg_product_reviews_updated_at
     BEFORE UPDATE ON product_reviews
     FOR EACH ROW EXECUTE FUNCTION fn_set_updated_at();
 
+DROP TRIGGER IF EXISTS trg_business_settings_updated_at ON business_settings;
+CREATE TRIGGER trg_business_settings_updated_at
+    BEFORE UPDATE ON business_settings
+    FOR EACH ROW EXECUTE FUNCTION fn_set_updated_at();
+
+DROP TRIGGER IF EXISTS trg_cities_updated_at ON cities;
+CREATE TRIGGER trg_cities_updated_at
+    BEFORE UPDATE ON cities
+    FOR EACH ROW EXECUTE FUNCTION fn_set_updated_at();
+
+DROP TRIGGER IF EXISTS trg_brands_updated_at ON brands;
+CREATE TRIGGER trg_brands_updated_at
+    BEFORE UPDATE ON brands
+    FOR EACH ROW EXECUTE FUNCTION fn_set_updated_at();
+
+DROP TRIGGER IF EXISTS trg_banners_updated_at ON banners;
+CREATE TRIGGER trg_banners_updated_at
+    BEFORE UPDATE ON banners
+    FOR EACH ROW EXECUTE FUNCTION fn_set_updated_at();
+
 -- ===========================================================================
 -- 2. PRODUCT FULL-TEXT SEARCH VECTOR
 -- Maintains products.search_vector automatically on INSERT and UPDATE.

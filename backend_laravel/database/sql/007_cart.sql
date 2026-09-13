@@ -1,8 +1,8 @@
 -- =============================================================================
--- Migration 007 : Shopping Cart
+-- Migration 007 : Shopping Cart & Wishlists
 -- Project       : commerce-single-vendor
--- Tables        : carts, cart_items
--- Depends on    : 005_products_attributes_variants.sql (product_variants)
+-- Tables        : carts, cart_items, wishlists
+-- Depends on    : 005_products_attributes_variants.sql (products, product_variants)
 --                 002_identity_auth.sql (users)
 -- Design notes  :
 --   - Confirmed: user_id NOT NULL — no guest checkout. All carts are authenticated.
@@ -52,5 +52,34 @@ COMMENT ON COLUMN cart_items.variant_id IS 'ON DELETE CASCADE: removing a varian
 COMMENT ON COLUMN cart_items.quantity  IS 'CHECK (> 0): zero-quantity items must be deleted, not stored.';
 
 CREATE INDEX idx_cart_items_cart_id ON cart_items (cart_id);
+
+-- ---------------------------------------------------------------------------
+-- WISHLISTS
+-- Saved product items per customer user.
+-- ---------------------------------------------------------------------------
+CREATE TABLE wishlists (
+    id         BIGSERIAL   PRIMARY KEY,
+    user_id    BIGINT      NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    product_id BIGINT      NOT NULL REFERENCES products(id) ON DELETE CASCADE,
+    variant_id BIGINT      REFERENCES product_variants(id) ON DELETE CASCADE,
+    added_at   TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+COMMENT ON TABLE  wishlists            IS 'Customer saved items / wishlists registry.';
+COMMENT ON COLUMN wishlists.user_id    IS 'Owning customer user ID. Cascades on user deletion.';
+COMMENT ON COLUMN wishlists.product_id IS 'Saved product ID. Cascades on product deletion.';
+COMMENT ON COLUMN wishlists.variant_id IS 'Optional saved variant ID.';
+
+CREATE INDEX idx_wishlists_user_id    ON wishlists (user_id);
+CREATE INDEX idx_wishlists_product_id ON wishlists (product_id);
+
+-- Partial unique indexes preventing duplicate wishlist entries per user
+CREATE UNIQUE INDEX uq_wishlists_user_product_null_variant
+    ON wishlists (user_id, product_id)
+    WHERE variant_id IS NULL;
+
+CREATE UNIQUE INDEX uq_wishlists_user_product_variant
+    ON wishlists (user_id, product_id, variant_id)
+    WHERE variant_id IS NOT NULL;
 
 COMMIT;

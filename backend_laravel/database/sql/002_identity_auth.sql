@@ -1,8 +1,8 @@
 -- =============================================================================
--- Migration 002 : Identity & Authentication
+-- Migration 002 : Identity & Authentication & Business Settings
 -- Project       : commerce-single-vendor
 -- Tables        : roles, permissions, role_permissions, users,
---                 sessions, password_reset_tokens
+--                 sessions, password_reset_tokens, business_settings
 -- Depends on    : 001_extensions_enums.sql (citext, pgcrypto)
 -- =============================================================================
 
@@ -139,5 +139,33 @@ COMMENT ON TABLE  password_reset_tokens         IS 'Single-use password reset to
 COMMENT ON COLUMN password_reset_tokens.used_at IS 'NULL = token still valid. Application must check used_at IS NULL AND expires_at > now().';
 
 CREATE INDEX idx_prt_user_id ON password_reset_tokens (user_id);
+
+-- ---------------------------------------------------------------------------
+-- BUSINESS SETTINGS
+-- System-wide key-value configuration store.
+-- ---------------------------------------------------------------------------
+CREATE TABLE business_settings (
+    id          BIGSERIAL    PRIMARY KEY,
+    key         VARCHAR(100) UNIQUE NOT NULL,
+    value       TEXT,
+    type        VARCHAR(30)  NOT NULL DEFAULT 'string',
+    is_public   BOOLEAN      NOT NULL DEFAULT FALSE,
+    is_active   BOOLEAN      NOT NULL DEFAULT TRUE,
+    description TEXT,
+    created_at  TIMESTAMPTZ  NOT NULL DEFAULT now(),
+    updated_at  TIMESTAMPTZ  NOT NULL DEFAULT now(),
+
+    CONSTRAINT business_settings_key_format_check
+        CHECK (key ~ '^[a-z0-9_.]+$'),
+    CONSTRAINT business_settings_type_check
+        CHECK (type IN ('string', 'number', 'boolean', 'json', 'array'))
+);
+
+COMMENT ON TABLE  business_settings             IS 'Global system configuration store for store info, feature flags, and business rules.';
+COMMENT ON COLUMN business_settings.key         IS 'Dot-notation or snake_case key (e.g., store.name, store.phone, store.logo). UNIQUE.';
+COMMENT ON COLUMN business_settings.is_public   IS 'TRUE = safe to expose to public/frontend API; FALSE = backend internal only.';
+COMMENT ON COLUMN business_settings.is_active   IS 'TRUE = setting active and in effect; FALSE = disabled/inactive setting.';
+
+CREATE INDEX idx_business_settings_key_active ON business_settings (key) WHERE is_active = TRUE;
 
 COMMIT;

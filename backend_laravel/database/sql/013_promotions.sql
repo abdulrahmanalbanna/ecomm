@@ -1,18 +1,19 @@
 -- =============================================================================
--- Migration 013 : Promotions — Coupons & Usage Tracking
+-- Migration 013 : Promotions — Coupons, Usage Tracking & Banners
 -- Project       : commerce-single-vendor
--- Tables        : coupons, coupon_usages
+-- Tables        : coupons, coupon_usages, banners
 -- Depends on    : 002_identity_auth.sql (users)
 --                 008_orders.sql (orders)
 --                 001_extensions_enums.sql (citext extension)
 -- Design notes  :
---   - CONFIRMED scope: coupon codes only. No automatic promotion rule engine.
+--   - CONFIRMED scope: coupon codes and promotional banners.
 --   - Coupons support two discount types: percentage (0-100%) or fixed SAR amount.
 --   - per_user_limit controls how many times one customer can reuse the same coupon.
 --   - coupon_usages tracks individual redemptions for limit enforcement and audit.
 --   - used_count incremented atomically via UPDATE ... WHERE used_count < max_uses
 --     (0 rows affected = coupon exhausted — application should rollback).
 --   - CITEXT on code: 'SAVE10' and 'save10' are treated as identical (prevents bypass).
+--   - Banners store promotional imagery, landing page links, position slot, and active schedule.
 -- =============================================================================
 
 BEGIN;
@@ -90,5 +91,38 @@ COMMENT ON COLUMN coupon_usages.order_id IS 'Reference to orders.id. No FK (orde
 -- Per-user usage count lookup: SELECT COUNT(*) FROM coupon_usages WHERE coupon_id = $1 AND user_id = $2
 CREATE INDEX idx_coupon_usages_user_limit
     ON coupon_usages (coupon_id, user_id);
+
+-- ---------------------------------------------------------------------------
+-- BANNERS
+-- Promotional banner slides and marketing banners.
+-- ---------------------------------------------------------------------------
+CREATE TABLE banners (
+    id               BIGSERIAL    PRIMARY KEY,
+    title            VARCHAR(200) NOT NULL,
+    subtitle         TEXT,
+    image_url        TEXT         NOT NULL,
+    mobile_image_url TEXT,
+    link_url         TEXT,
+    target_type      VARCHAR(50),
+    target_id        VARCHAR(100),
+    position         VARCHAR(50)  NOT NULL DEFAULT 'home_slider',
+    sort_order       INT          NOT NULL DEFAULT 0,
+    is_active        BOOLEAN      NOT NULL DEFAULT TRUE,
+    start_at         TIMESTAMPTZ,
+    end_at           TIMESTAMPTZ,
+    click_count      BIGINT       NOT NULL DEFAULT 0 CHECK (click_count >= 0),
+    created_at       TIMESTAMPTZ  NOT NULL DEFAULT now(),
+    updated_at       TIMESTAMPTZ  NOT NULL DEFAULT now(),
+
+    CONSTRAINT banners_sort_order_check CHECK (sort_order >= 0),
+    CONSTRAINT banners_validity_window_check
+        CHECK (start_at IS NULL OR end_at IS NULL OR end_at > start_at)
+);
+
+COMMENT ON TABLE  banners            IS 'Promotional banners and carousel slides.';
+COMMENT ON COLUMN banners.position   IS 'Display placement location (e.g. home_slider, sidebar, popup, banner_strip).';
+COMMENT ON COLUMN banners.click_count IS 'Total click engagement counter.';
+
+CREATE INDEX idx_banners_position_active ON banners (position, is_active, sort_order);
 
 COMMIT;

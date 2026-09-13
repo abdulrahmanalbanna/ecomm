@@ -72,6 +72,12 @@ INSERT INTO permissions (code, description) VALUES
     -- Promotions
     ('coupons.view',            'View coupon codes'),
     ('coupons.manage',          'Create, edit, deactivate coupons'),
+    ('banners.view',            'View promotional banners'),
+    ('banners.manage',          'Create, edit, and delete promotional banners'),
+
+    -- Brands
+    ('brands.view',             'View catalog brands'),
+    ('brands.manage',           'Create, edit, and delete catalog brands'),
 
     -- Reports & analytics
     ('reports.sales',           'Access daily and monthly sales reports'),
@@ -88,7 +94,8 @@ INSERT INTO permissions (code, description) VALUES
     ('self.orders.view',        'Customer: view own orders'),
     ('self.profile.edit',       'Customer: edit own profile'),
     ('self.addresses.manage',   'Customer: manage own addresses'),
-    ('self.reviews.create',     'Customer: write product reviews')
+    ('self.reviews.create',     'Customer: write product reviews'),
+    ('self.wishlist.manage',    'Customer: manage own wishlist items')
 ON CONFLICT (code) DO NOTHING;
 
 -- ===========================================================================
@@ -112,11 +119,13 @@ FROM roles r
 JOIN permissions p ON p.code IN (
     'products.view', 'products.create', 'products.edit', 'products.publish',
     'categories.view', 'categories.manage',
+    'brands.view', 'brands.manage',
     'inventory.view', 'inventory.adjust', 'inventory.reports',
     'orders.view', 'orders.process', 'orders.cancel', 'orders.export',
     'payments.view', 'payments.reconcile',
     'reviews.view', 'reviews.approve', 'reviews.delete',
     'coupons.view', 'coupons.manage',
+    'banners.view', 'banners.manage',
     'reports.sales', 'reports.products', 'reports.inventory'
 )
 WHERE r.name = 'staff'
@@ -130,7 +139,8 @@ JOIN permissions p ON p.code IN (
     'self.orders.view',
     'self.profile.edit',
     'self.addresses.manage',
-    'self.reviews.create'
+    'self.reviews.create',
+    'self.wishlist.manage'
 )
 WHERE r.name = 'customer'
 ON CONFLICT DO NOTHING;
@@ -183,6 +193,34 @@ INSERT INTO attribute_options (attribute_id, value, display_name, sort_order)
   WHERE d.type IN ('select', 'multiselect')
   ON CONFLICT (attribute_id, value) DO NOTHING;
 
+-- ==========================================================================
+-- 6. BUSINESS SETTINGS
+-- ==========================================================================
+INSERT INTO business_settings (key, value, type, is_public, is_active, description)
+VALUES
+    ('store.name',            'My E-Commerce Store',         'string',  TRUE,  TRUE, 'Public store display name'),
+    ('store.phone',           '+966500000000',              'string',  TRUE,  TRUE, 'Support contact phone number'),
+    ('store.logo',            '/assets/images/logo.png',    'string',  TRUE,  TRUE, 'Primary header logo image URL'),
+    ('store.footer_logo',     '/assets/images/footer.png',  'string',  TRUE,  TRUE, 'Footer logo image URL'),
+    ('store.fav_icon',        '/assets/images/favicon.ico', 'string',  TRUE,  TRUE, 'Favicon icon URL'),
+    ('store.copyright_text',  '© 2026 All Rights Reserved',   'string',  TRUE,  TRUE, 'Footer copyright notice text'),
+    ('store.currency',        'SAR',                        'string',  TRUE,  TRUE, 'Default store currency code'),
+    ('financial.tax_rate',    '15.00',                      'number',  FALSE, TRUE, 'VAT / Tax percentage rate'),
+    ('system.maintenance_mode', 'false',                   'boolean', TRUE,  TRUE, 'System maintenance mode toggle flag')
+ON CONFLICT (key) DO NOTHING;
+
+-- ==========================================================================
+-- 7. CITIES
+-- ==========================================================================
+INSERT INTO cities (name, country_code, is_active, sort_order)
+VALUES
+    ('Riyadh',  'SA', TRUE, 1),
+    ('Jeddah',  'SA', TRUE, 2),
+    ('Dammam',  'SA', TRUE, 3),
+    ('Mecca',   'SA', TRUE, 4),
+    ('Medina',  'SA', TRUE, 5)
+ON CONFLICT (country_code, name) DO NOTHING;
+
 -- ===========================================================================
 -- CONFIRMATION
 -- ===========================================================================
@@ -194,6 +232,8 @@ DECLARE
     v_gateways     INT;
     v_shipping     INT;
     v_attr_options INT;
+    v_settings     INT;
+    v_cities       INT;
 BEGIN
     SELECT COUNT(*) INTO v_roles       FROM roles;
     SELECT COUNT(*) INTO v_permissions FROM permissions;
@@ -201,6 +241,8 @@ BEGIN
     SELECT COUNT(*) INTO v_gateways    FROM payment_gateways;
     SELECT COUNT(*) INTO v_shipping    FROM shipping_methods;
     SELECT COUNT(*) INTO v_attr_options FROM attribute_options;
+    SELECT COUNT(*) INTO v_settings    FROM business_settings;
+    SELECT COUNT(*) INTO v_cities      FROM cities;
 
     RAISE NOTICE '========================================';
     RAISE NOTICE 'Seed data summary:';
@@ -210,6 +252,8 @@ BEGIN
     RAISE NOTICE '  payment_gateways   : % (seeded in 010)', v_gateways;
     RAISE NOTICE '  shipping_methods   : %', v_shipping;
     RAISE NOTICE '  attribute_options  : %', v_attr_options;
+    RAISE NOTICE '  business_settings  : %', v_settings;
+    RAISE NOTICE '  cities             : %', v_cities;
     RAISE NOTICE '========================================';
 END;
 $$;
