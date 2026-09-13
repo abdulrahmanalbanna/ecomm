@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\Feature;
 
+use App\Modules\Customer\Infrastructure\Persistence\Models\Address;
+use App\Modules\Customer\Infrastructure\Persistence\Models\City;
 use App\Modules\Identity\Infrastructure\Persistence\Models\Role;
 use App\Modules\Identity\Infrastructure\Persistence\Models\Session;
 use App\Modules\Identity\Infrastructure\Persistence\Models\User;
@@ -66,6 +68,32 @@ final class CustomerAddressCreationTest extends TestCase
             'recipient_name' => 'John Doe',
             'country_code'   => 'SA',
         ]);
+    }
+
+    public function test_address_city_relationship_and_foreign_key_are_supported(): void
+    {
+        $city = City::create([
+            'name' => 'Test City',
+            'country_code' => 'SA',
+            'is_active' => true,
+            'sort_order' => 99,
+        ]);
+
+        $address = Address::create([
+            'user_id' => $this->user->id,
+            'city_id' => $city->id,
+            'recipient_name' => 'Structured City User',
+            'line1' => '1 Test Street',
+            'city' => $city->name,
+            'country_code' => 'SA',
+        ]);
+
+        $this->assertSame($city->id, $address->city_id);
+        // The legacy free-text `city` column intentionally remains on addresses,
+        // so access the structured relationship explicitly to avoid the attribute
+        // taking precedence over the relationship's dynamic property.
+        $this->assertTrue($address->city()->firstOrFail()->is($city));
+        $this->assertTrue($city->addresses->contains(fn (Address $item): bool => $item->is($address)));
     }
 
     public function test_country_code_is_normalized_to_uppercase(): void

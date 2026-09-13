@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Feature;
 
+use App\Modules\Catalog\Infrastructure\Persistence\Models\Brand;
 use App\Modules\Catalog\Infrastructure\Persistence\Models\Category;
 use App\Modules\Catalog\Infrastructure\Persistence\Models\Product;
 use App\Modules\Catalog\Infrastructure\Persistence\Models\ProductVariant;
@@ -134,6 +135,28 @@ final class CatalogProductTest extends TestCase
         $response = $this->getJson('/api/v1/catalog/products?featured=1');
         $response->assertStatus(200)
             ->assertJsonFragment(['slug' => 'featured-item']);
+    }
+
+    public function test_product_brand_relationship_and_foreign_key_are_supported(): void
+    {
+        $brand = Brand::create([
+            'slug' => 'test-brand-' . bin2hex(random_bytes(4)),
+            'name' => 'Test Brand',
+            'is_active' => true,
+        ]);
+
+        $product = Product::create([
+            'category_id' => $this->category->id,
+            'brand_id' => $brand->id,
+            'slug' => 'branded-item-' . bin2hex(random_bytes(4)),
+            'name' => 'Branded Item',
+            'status' => 'draft',
+            'is_active' => true,
+        ]);
+
+        $this->assertSame($brand->id, $product->brand_id);
+        $this->assertTrue($product->brand->is($brand));
+        $this->assertTrue($brand->products->contains(fn (Product $item): bool => $item->is($product)));
     }
 
     public function test_product_soft_delete_workflow(): void

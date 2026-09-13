@@ -35,6 +35,7 @@ class Product extends Model
     protected $fillable = [
         'public_id',
         'category_id',
+        'brand_id',
         'slug',
         'name',
         'description',
@@ -64,6 +65,11 @@ class Product extends Model
     public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class, 'category_id');
+    }
+
+    public function brand(): BelongsTo
+    {
+        return $this->belongsTo(Brand::class, 'brand_id');
     }
 
     public function variants(): HasMany

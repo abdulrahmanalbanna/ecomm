@@ -205,7 +205,10 @@ final class InventoryReservationLifecycleTest extends TestCase
         ));
 
         $movements = InventoryMovement::where('variant_id', $this->variant->id)
+            // PostgreSQL timestamps may be equal for rapid writes; the sequence-backed
+            // movement ID is the authoritative insertion order within this test.
             ->orderBy('created_at', 'asc')
+            ->orderBy('id', 'asc')
             ->get();
 
         $this->assertCount(3, $movements);

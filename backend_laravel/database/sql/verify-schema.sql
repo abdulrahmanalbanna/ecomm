@@ -449,8 +449,13 @@ DECLARE
     required_indexes TEXT[] := ARRAY[
         'idx_users_active_email',
         'idx_sessions_active_token',
+        'idx_business_settings_key_active',
+        'idx_cities_country_active',
         'idx_addresses_one_default_per_user',
         'idx_categories_path_gist',
+        'idx_brands_slug',
+        'idx_brands_featured',
+        'idx_products_brand_id',
         'idx_products_fts',
         'idx_products_specifications',
         'idx_products_tags',
@@ -461,7 +466,12 @@ DECLARE
         'idx_audit_brin_created',
         'idx_audit_new_values_gin',
         'idx_coupons_active_code',
-        'idx_payments_reconciliation'
+        'idx_banners_position_active',
+        'idx_payments_reconciliation',
+        'idx_wishlists_user_id',
+        'idx_wishlists_product_id',
+        'uq_wishlists_user_product_null_variant',
+        'uq_wishlists_user_product_variant'
     ];
     idxname TEXT;
     exists_flag BOOLEAN;
@@ -492,11 +502,15 @@ DECLARE
     perm_count     INT;
     gateway_count  INT;
     shipping_count INT;
+    settings_count INT;
+    cities_count   INT;
 BEGIN
     SELECT COUNT(*) INTO role_count     FROM roles;
     SELECT COUNT(*) INTO perm_count     FROM permissions;
     SELECT COUNT(*) INTO gateway_count  FROM payment_gateways;
     SELECT COUNT(*) INTO shipping_count FROM shipping_methods;
+    SELECT COUNT(*) INTO settings_count FROM business_settings;
+    SELECT COUNT(*) INTO cities_count   FROM cities;
 
     INSERT INTO _verify_results (category, check_name, status, detail) VALUES (
         'Seed Data', 'roles (admin, staff, customer)',
@@ -520,6 +534,18 @@ BEGIN
         'Seed Data', 'shipping_methods',
         CASE WHEN shipping_count >= 2 THEN 'PASS' ELSE 'FAIL' END,
         'Count: ' || shipping_count
+    );
+
+    INSERT INTO _verify_results (category, check_name, status, detail) VALUES (
+        'Seed Data', 'business_settings',
+        CASE WHEN settings_count >= 9 THEN 'PASS' ELSE 'FAIL' END,
+        'Count: ' || settings_count || ' (expected at least 9)'
+    );
+
+    INSERT INTO _verify_results (category, check_name, status, detail) VALUES (
+        'Seed Data', 'cities',
+        CASE WHEN cities_count >= 5 THEN 'PASS' ELSE 'FAIL' END,
+        'Count: ' || cities_count || ' (expected at least 5)'
     );
 END;
 $$;

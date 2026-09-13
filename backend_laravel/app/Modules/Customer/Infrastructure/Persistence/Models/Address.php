@@ -24,6 +24,7 @@ class Address extends Model
      */
     protected $fillable = [
         'user_id',
+        'city_id',
         'label',
         'recipient_name',
         'phone',
@@ -42,6 +43,7 @@ class Address extends Model
     protected function casts(): array
     {
         return [
+            'city_id' => 'integer',
             'is_default' => 'boolean',
             'created_at' => 'datetime',
             'updated_at' => 'datetime',
@@ -54,5 +56,13 @@ class Address extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id');
+    }
+
+    /**
+     * Relationship: Address may reference a supported delivery city.
+     */
+    public function city(): BelongsTo
+    {
+        return $this->belongsTo(City::class, 'city_id');
     }
 }
