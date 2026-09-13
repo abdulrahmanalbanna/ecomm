@@ -188,8 +188,7 @@ export function Hero() {
               key={c.id}
               onClick={() => document.getElementById(`rail-${c.id}`)?.scrollIntoView({ behavior: "smooth" })}
               className="shrink-0 text-[12.5px] font-bold text-primary-100/80 transition-colors hover:text-secondary-300"
-            >
-              {pickLocale(locale, c.name, c.nameEn)}
+            > {c.name}
             </button>
           ))}
         </div>

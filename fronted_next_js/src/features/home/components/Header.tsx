@@ -4,7 +4,7 @@ import Image from "next/image";
 
 import { useEffect, useRef, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
-import { categories, formatPrice, pickLocale, products, tickerItems, tickerItemsEn } from "../catalog";
+import { categories, formatPrice, pickLocale, products, tickerItems } from "../catalog";
 import { branding } from "@/config/branding";
 import { useCart } from "@/stores/cart";
 import { IconCart, IconChevron, IconPhone, IconSearch, IconUser, IconWhatsApp } from "@/features/home/components/Icons";
@@ -38,7 +38,7 @@ export function Logo({ light = false }: { light?: boolean }) {
 
 function Ticker() {
   const locale = useLocale();
-  const items = locale === "ar" ? [...tickerItems, ...tickerItems] : [...tickerItemsEn, ...tickerItemsEn];
+  const items = [...tickerItems, ...tickerItems];
   return (
     <div className="overflow-hidden bg-primary-950 py-1.5" dir="ltr">
       <div className="anim-ticker flex w-max items-center gap-8">
@@ -111,7 +111,7 @@ function SearchBox({ onFocusSearch, inputId = "site-search" }: { onFocusSearch?:
                 <Image src={p.image} alt="" width={44} height={44} className="h-11 w-11 rounded-lg object-cover" />
                 <span className="flex-1">
                   <span className="block truncate text-[13px] font-bold text-muted-900">{p.name}</span>
-                  <span className="text-[11.5px] text-muted-400">{(() => { const c = categories.find((c) => c.id === p.category); return c ? pickLocale(locale, c.name, c.nameEn) : ""; })()}</span>
+                  <span className="text-[11.5px] text-muted-400">{(() => { const c = categories.find((c) => c.id === p.category); return c ? c.name : ""; })()}</span>
                 </span>
                 <span className="font-display text-sm font-extrabold text-primary-800 tabular">
                   {formatPrice(p.price)} <span className="text-[10px] text-muted-400">SAR</span>
@@ -251,7 +251,7 @@ export function Header() {
                     : "border-transparent text-muted-500 hover:text-primary-800"
                 }`}
               >
-                {pickLocale(locale, c.name, c.nameEn)}
+                {c.name}
               </button>
             ))}
             <span className="mr-auto whitespace-nowrap py-2.5 pl-2 text-[12px] font-bold text-secondary-700">

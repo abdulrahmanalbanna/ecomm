@@ -1,9 +1,7 @@
 export type Category = {
   id: string;
   name: string;
-  nameEn: string;
   desc: string;
-  descEn: string;
   image: string;
   tint: string;
 };
@@ -43,13 +41,13 @@ export const IMG = {
 };
 
 export const categories: Category[] = [
-  { id: "coffee", name: "محضّرات القهوة", nameEn: "Coffee machines", desc: "مكائن إسبريسو إيطالية للكافيهات والمطاعم", descEn: "Italian espresso machines for cafés and restaurants", image: IMG.espresso, tint: "#FF6A00" },
-  { id: "grinders", name: "مطاحن القهوة", nameEn: "Coffee grinders", desc: "مطاحن إسبريسو وسنجل دوز بدقة طحن عالية", descEn: "Espresso & single-dose grinders with high precision", image: IMG.grinder, tint: "#062B6F" },
-  { id: "cooling", name: "التبريد والتجميد", nameEn: "Refrigeration & freezing", desc: "ثلاجات عرض وصانعات ثلج بتوفير طاقة عالي", descEn: "Display fridges & ice makers, energy efficient", image: IMG.icemaker, tint: "#0B4EA2" },
-  { id: "cooking", name: "الأفران والطهي التجاري", nameEn: "Ovens & commercial cooking", desc: "أفران ديك وكونفكشن للمخابز والمطابخ المركزية", descEn: "Deck & convection ovens for bakeries and central kitchens", image: IMG.oven, tint: "#D65600" },
-  { id: "frying", name: "معدات القلي", nameEn: "Frying equipment", desc: "قلايات كهرباء وغاز بأحواض ومصارف زيت", descEn: "Electric & gas fryers with oil drains", image: IMG.fryer, tint: "#B44A00" },
-  { id: "bakery", name: "الحلويات والمخبوزات", nameEn: "Pastry & bakery", desc: "عجانات وخفاقات وفردات لمعامل الحلويات", descEn: "Mixers, beaters & sheeters for pastry labs", image: IMG.mixer, tint: "#1459B8" },
-  { id: "drinks", name: "المشروبات والعصائر", nameEn: "Beverages & juices", desc: "برادات عصير وسلاش وغلايات لكل قائمة مشروبات", descEn: "Juice dispensers, slush & boilers for every drinks menu", image: IMG.juice, tint: "#FF862E" },
+  { id: "coffee", name: "محضّرات القهوة", desc: "مكائن إسبريسو إيطالية للكافيهات والمطاعم", image: IMG.espresso, tint: "#FF6A00" },
+  { id: "grinders", name: "مطاحن القهوة", desc: "مطاحن إسبريسو وسنجل دوز بدقة طحن عالية", image: IMG.grinder, tint: "#062B6F" },
+  { id: "cooling", name: "التبريد والتجميد", desc: "ثلاجات عرض وصانعات ثلج بتوفير طاقة عالي", image: IMG.icemaker, tint: "#0B4EA2" },
+  { id: "cooking", name: "الأفران والطهي التجاري", desc: "أفران ديك وكونفكشن للمخابز والمطابخ المركزية", image: IMG.oven, tint: "#D65600" },
+  { id: "frying", name: "معدات القلي", desc: "قلايات كهرباء وغاز بأحواض ومصارف زيت", image: IMG.fryer, tint: "#B44A00" },
+  { id: "bakery", name: "الحلويات والمخبوزات", desc: "عجانات وخفاقات وفردات لمعامل الحلويات", image: IMG.mixer, tint: "#1459B8" },
+  { id: "drinks", name: "المشروبات والعصائر", desc: "برادات عصير وسلاش وغلايات لكل قائمة مشروبات", image: IMG.juice, tint: "#FF862E" },
 ];
 
 export const products: Product[] = [
@@ -128,12 +126,12 @@ export const newArrivals = ["cf-5", "gr-8", "co-8", "ov-8", "fr-8", "bk-5", "dr-
 export const bestSellers = ["cf-1", "co-1", "gr-2", "ov-4", "fr-3", "bk-1", "dr-1", "cf-8"];
 
 export const projects = [
-  { id: "p1", name: "تجهيز كافيهات", nameEn: "Café setup", count: 46, image: IMG.hero, tag: "من الفكرة إلى الافتتاح", tagEn: "From idea to opening" },
-  { id: "p2", name: "تجهيز مطاعم", nameEn: "Restaurant setup", count: 58, image: IMG.fryer, tag: "مطابخ تشغيل كامل", tagEn: "Full operating kitchens" },
-  { id: "p3", name: "محلات الحلويات", nameEn: "Dessert shops", count: 24, image: IMG.showcase, tag: "عرض وتبريد وقوالب", tagEn: "Display, cooling & molds" },
-  { id: "p4", name: "تجهيز مخابز", nameEn: "Bakery setup", count: 19, image: IMG.banner, tag: "خط إنتاج متكامل", tagEn: "Complete production line" },
-  { id: "p5", name: "سوبر ماركت", nameEn: "Supermarkets", count: 15, image: IMG.icemaker, tag: "تبريد وعرض وتخزين", tagEn: "Cooling, display & storage" },
-  { id: "p6", name: "فنادق وضيافة", nameEn: "Hotels & hospitality", count: 12, image: IMG.juice, tag: "بوفيه وخدمة غرف", tagEn: "Buffet & room service" },
+  { id: "p1", name: "تجهيز كافيهات", count: 46, image: IMG.hero, tag: "من الفكرة إلى الافتتاح" },
+  { id: "p2", name: "تجهيز مطاعم", count: 58, image: IMG.fryer, tag: "مطابخ تشغيل كامل" },
+  { id: "p3", name: "محلات الحلويات", count: 24, image: IMG.showcase, tag: "عرض وتبريد وقوالب" },
+  { id: "p4", name: "تجهيز مخابز", count: 19, image: IMG.banner, tag: "خط إنتاج متكامل" },
+  { id: "p5", name: "سوبر ماركت", count: 15, image: IMG.icemaker, tag: "تبريد وعرض وتخزين" },
+  { id: "p6", name: "فنادق وضيافة", count: 12, image: IMG.juice, tag: "بوفيه وخدمة غرف" },
 ];
 
 export const brands = [
@@ -148,17 +146,17 @@ export const brands = [
 ];
 
 export const features = [
-  { id: "f1", title: "استيراد مباشر", titleEn: "Direct importing", desc: "نستورد من المصانع الأم مباشرة، فكل قطعة أصلية وبسعر بلا وسطاء.", descEn: "We import directly from parent factories — genuine parts at no-middleman prices.", icon: "cargo" },
-  { id: "f2", title: "وكلاء معتمدون", titleEn: "Authorized dealers", desc: "وكالة رسمية لعلامات عالمية مع شهادات اعتماد وضمان مصنعي.", descEn: "Official agency for global brands with accreditation and factory warranty.", icon: "shield" },
-  { id: "f3", title: "صيانة وقطع غيار", titleEn: "Maintenance & spare parts", desc: "فريق فني متنقل وقطع غيار أصلية تصلك أينما كان مشروعك.", descEn: "Mobile technical team and genuine spare parts wherever your project is.", icon: "wrench" },
-  { id: "f4", title: "استشارات مجانية", titleEn: "Free consultations", desc: "نرافقك من رسم المخطط حتى أول تشغيل، بتوصيات تناسب ميزانيتك.", descEn: "We stay with you from layout drawing to first run, with budget-fit recommendations.", icon: "compass" },
+  { id: "f1", title: "استيراد مباشر", desc: "نستورد من المصانع الأم مباشرة، فكل قطعة أصلية وبسعر بلا وسطاء.", icon: "cargo" },
+  { id: "f2", title: "وكلاء معتمدون", desc: "وكالة رسمية لعلامات عالمية مع شهادات اعتماد وضمان مصنعي.", icon: "shield" },
+  { id: "f3", title: "صيانة وقطع غيار", desc: "فريق فني متنقل وقطع غيار أصلية تصلك أينما كان مشروعك.", icon: "wrench" },
+  { id: "f4", title: "استشارات مجانية", desc: "نرافقك من رسم المخطط حتى أول تشغيل، بتوصيات تناسب ميزانيتك.", icon: "compass" },
 ];
 
 export const stats = [
-  { value: 50, suffix: "+", label: "مدينة نغطيها بالشحن", labelEn: "Cities covered by shipping" },
-  { value: 120, suffix: "+", label: "مشروع جُهّز معنا", labelEn: "Projects equipped with us" },
-  { value: 15, suffix: "+", label: "سنة في السوق السعودي", labelEn: "Years in the Saudi market" },
-  { value: 98, suffix: "%", label: "رضا عملائنا", labelEn: "Client satisfaction" },
+  { value: 50, suffix: "+", label: "مدينة نغطيها بالشحن" },
+  { value: 120, suffix: "+", label: "مشروع جُهّز معنا" },
+  { value: 15, suffix: "+", label: "سنة في السوق السعودي" },
+  { value: 98, suffix: "%", label: "رضا عملائنا" },
 ];
 
 export const tickerItems = [
@@ -170,14 +168,6 @@ export const tickerItems = [
   "استشارة تجهيز مجانية لمشاريعك",
 ];
 
-export const tickerItemsEn = [
-  "Free shipping on orders over SAR 1,500",
-  "2-year warranty on all machines",
-  "Installments available via Tamara",
-  "Installation & commissioning in Riyadh and Jeddah",
-  "5% off your first order with code TG5",
-  "Free setup consultation for your project",
-];
 
 export const cities: { ar: string; en: string }[] = [
   { ar: "الرياض", en: "Riyadh" },

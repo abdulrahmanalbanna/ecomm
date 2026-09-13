@@ -115,7 +115,7 @@ export function CategoryTiles() {
             >
               <Image
                 src={c.image}
-                alt={pickLocale(locale, c.name, c.nameEn)}
+                alt={c.name}
                 width={512}
                 height={400}
                 className="h-40 w-full object-cover opacity-80 transition-all duration-700 group-hover:scale-110 group-hover:opacity-100 md:h-44"
@@ -128,8 +128,8 @@ export function CategoryTiles() {
                 >
                   {categoryIcon(c.id, 19)}
                 </span> */}
-                <h3 className="font-display text-[16px] font-extrabold text-background">{pickLocale(locale, c.name, c.nameEn)}</h3>
-                <p className="mt-0.5 line-clamp-1 text-[11.5px] font-medium text-primary-100/70">{pickLocale(locale, c.desc, c.descEn)}</p>
+                <h3 className="font-display text-[16px] font-extrabold text-background">{c.name}</h3>
+                <p className="mt-0.5 line-clamp-1 text-[11.5px] font-medium text-primary-100/70">{c.desc}</p>
                 <span className="mt-2 inline-flex items-center gap-1 text-[11.5px] font-extrabold text-secondary-400 opacity-0 transition-all duration-300 group-hover:opacity-100">
                   {t("browse")}
                   <IconArrow size={13} />
@@ -184,8 +184,8 @@ export function ProductRail({ catId }: { catId: string }) {
             {categoryIcon(catId, 27)}
           </span>
           <div className="flex-1">
-            <h2 className="font-display text-[22px] font-black text-muted-900 sm:text-[24px]">{pickLocale(locale, cat.name, cat.nameEn)}</h2>
-            <p className="text-[12.5px] font-medium text-muted-400">{pickLocale(locale, cat.desc, cat.descEn)} — {t("products", { count: items.length })}</p>
+            <h2 className="font-display text-[22px] font-black text-muted-900 sm:text-[24px]">{cat.name}</h2>
+            <p className="text-[12.5px] font-medium text-muted-400">{cat.desc} — {t("products", { count: items.length })}</p>
           </div>
           <div className="hidden gap-2 sm:flex">
             <button onClick={() => scroll(1)} aria-label={t("previous")} className="grid h-10 w-10 place-items-center rounded-xl border border-muted-200 bg-surface text-primary-900 transition-all hover:border-secondary-500 hover:text-secondary-600 active:scale-90">
@@ -259,11 +259,11 @@ export function ProjectsGrid() {
               onClick={() => document.getElementById("why-us")?.scrollIntoView({ behavior: "smooth" })}
               className="reveal group relative h-44 overflow-hidden rounded-xl text-right md:h-56"
             >
-              <Image src={pr.image} alt={pickLocale(locale, pr.name, pr.nameEn)} fill sizes="(min-width: 1024px) 33vw, 50vw" className="object-cover transition-transform duration-700 group-hover:scale-110" />
+              <Image src={pr.image} alt={pr.name} fill sizes="(min-width: 1024px) 33vw, 50vw" className="object-cover transition-transform duration-700 group-hover:scale-110" />
               <div className="absolute inset-0 bg-gradient-to-t from-primary-950 via-primary-950/45 to-primary-950/10 transition-opacity duration-300 group-hover:via-primary-950/60" />
               <div className="absolute inset-x-0 bottom-0 p-4 md:p-5">
-                <p className="text-[11px] font-bold text-secondary-300">{pickLocale(locale, pr.tag, pr.tagEn)}</p>
-                <h3 className="mt-0.5 font-display text-[17px] font-extrabold text-background md:text-[20px]">{pickLocale(locale, pr.name, pr.nameEn)}</h3>
+                <p className="text-[11px] font-bold text-secondary-300">{pr.tag}</p>
+                <h3 className="mt-0.5 font-display text-[17px] font-extrabold text-background md:text-[20px]">{pr.name}</h3>
                 <span className="mt-2 flex items-center gap-2 text-[12px] font-bold text-primary-100/80">
                   <span className="rounded-md bg-background/15 px-2 py-0.5 backdrop-blur-sm">{t("products", { count: pr.count })}</span>
                   <span className="flex translate-x-2 items-center gap-1 text-secondary-400 opacity-0 transition-all duration-300 group-hover:translate-x-0 group-hover:opacity-100">
@@ -406,7 +406,7 @@ export function WhyUs() {
           />
           <div className="grid grid-cols-2 gap-4">
             {stats.map((s, i) => (
-              <StatBlock key={s.label} value={s.value} suffix={s.suffix} label={pickLocale(locale, s.label, s.labelEn)} delay={i * 90} />
+              <StatBlock key={s.label} value={s.value} suffix={s.suffix} label={s.label} delay={i * 90} />
             ))}
           </div>
 
@@ -437,10 +437,10 @@ export function WhyUs() {
               </span>
               <div>
                 <div className="flex items-baseline gap-3">
-                  <h3 className="font-display text-[19px] font-extrabold text-background">{pickLocale(locale, f.title, f.titleEn)}</h3>
+                  <h3 className="font-display text-[19px] font-extrabold text-background">{f.title}</h3>
                   <span className="font-display text-[13px] font-black text-secondary-500/50 tabular">0{i + 1}</span>
                 </div>
-                <p className="mt-1.5 text-[13.5px] font-medium leading-7 text-primary-100/75">{pickLocale(locale, f.desc, f.descEn)}</p>
+                <p className="mt-1.5 text-[13.5px] font-medium leading-7 text-primary-100/75">{f.desc}</p>
               </div>
             </div>
           ))}
