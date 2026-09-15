@@ -4,9 +4,9 @@ import Image from "next/image";
 
 import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
-import { categories, formatPrice, products } from "../catalog";
+import { categories as staticCategories, formatPrice, type Category, type Product } from "../catalog";
 import { useShopSettings } from "../use-settings";
-import { useCart } from "@/stores/cart";
+import { useCart, resolveProduct } from "@/stores/cart";
 import { useMounted } from "@/hooks/use-home";
 import { Logo } from "./Header";
 import {
@@ -47,13 +47,10 @@ export function Toasts() {
 }
 
 /* ================= cart drawer ================= */
-export function CartDrawer() {
+export function CartDrawer({ byId }: { byId: Map<string, Product> }) {
   const t = useTranslations("home.cart");
   const { lines, drawerOpen, setDrawerOpen, inc, dec, remove, clear, subtotal, count } = useCart();
   const [placed, setPlaced] = useState(false);
-  // Generate the order number once when the order is placed (never during
-  // render): `Math.random()` in render returns a different value on the
-  // server vs the client and triggers a hydration mismatch.
   const [orderNo, setOrderNo] = useState<string | null>(null);
   const { settings } = useShopSettings();
   const FREE_SHIPPING_THRESHOLD = settings.free_shipping_threshold;
@@ -61,8 +58,6 @@ export function CartDrawer() {
   const remaining = Math.max(0, FREE_SHIPPING_THRESHOLD - subtotal);
   const progress = Math.min(100, (subtotal / FREE_SHIPPING_THRESHOLD) * 100);
 
-  // Reset the success state when the drawer closes (done in the close
-  // handlers below instead of an effect so there is no cascading render).
   const closeDrawer = () => {
     setPlaced(false);
     setOrderNo(null);
@@ -179,7 +174,25 @@ export function CartDrawer() {
             {/* lines */}
             <div className="flex-1 space-y-3 overflow-y-auto px-5 py-4">
               {lines.map((l) => {
-                const p = products.find((x) => x.id === l.id)!;
+                // Resolve via the shared live lookup first, then the cart
+                // store's fallback. If both miss (stale localStorage line
+                // before the catalog loaded) we render a minimal placeholder
+                // so the user can still see the line and remove it.
+                const p = byId.get(l.id) ?? resolveProduct(l.id);
+                if (!p) {
+                  return (
+                    <div key={l.id} className="anim-rise flex gap-3 rounded-xl border border-muted-200 bg-surface p-3">
+                      <div className="grid h-18 w-18 shrink-0 place-items-center rounded-lg bg-muted-200 text-muted-400">؟</div>
+                      <div className="min-w-0 flex-1">
+                        <h4 className="truncate text-[13px] font-extrabold text-muted-900">{l.id}</h4>
+                        <p className="mt-0.5 text-[11.5px] text-muted-400">×{l.qty}</p>
+                      </div>
+                      <button onClick={() => remove(l.id)} className="self-start text-muted-300 transition-colors hover:text-danger" aria-label={t("remove", { name: l.id })}>
+                        <IconTrash size={16} />
+                      </button>
+                    </div>
+                  );
+                }
                 return (
                   <div key={l.id} className="anim-rise flex gap-3 rounded-xl border border-muted-200 bg-surface p-3">
                     <Image src={p.image} alt={p.name} width={72} height={72} className="h-18 w-18 shrink-0 rounded-lg object-cover" />
@@ -196,7 +209,7 @@ export function CartDrawer() {
                             <IconMinus size={13} />
                           </button>
                         </div>
-                        <span className="font-display text-[14.5px] font-black text-primary-800 tabular">
+                        <span className="font-display text-[14.5px] font-extrabold text-primary-800 tabular">
                           {formatPrice(p.price * l.qty)} <span className="text-[10.5px] text-muted-400">SAR</span>
                         </span>
                       </div>
@@ -246,7 +259,6 @@ export function CartDrawer() {
 
 /* ================= chat widget ================= */
 type Msg = { from: "store" | "user"; text: string };
-
 
 type ChatTranslator = ReturnType<typeof useTranslations>;
 
@@ -379,8 +391,6 @@ export function MobileNav() {
   const t = useTranslations("home.mobile");
   const { count, setDrawerOpen, badgeKey } = useCart();
   const [active, setActive] = useState("home");
-  // Same localStorage-hydration guard as Header: only show the persisted
-  // count after mount so SSR HTML (count = 0) matches the first client render.
   const mounted = useMounted();
 
   const items = [
@@ -423,10 +433,12 @@ export function MobileNav() {
 }
 
 /* ================= footer ================= */
-export function Footer() {
+export function Footer({ categories }: { categories?: Category[] }) {
   const t = useTranslations("home.footer");
   const [email, setEmail] = useState("");
   const [subscribed, setSubscribed] = useState(false);
+
+  const displayCategories = (categories && categories.length > 0) ? categories : staticCategories;
 
   const cols = [
     {
@@ -435,8 +447,8 @@ export function Footer() {
     },
     {
       title: t("topCategories"),
-      links: categories.slice(0, 6).map((c) => c.name),
-      ids: categories.slice(0, 6).map((c) => `rail-${c.id}`),
+      links: displayCategories.slice(0, 6).map((c: Category) => c.name),
+      ids: displayCategories.slice(0, 6).map((c: Category) => `rail-${c.id}`),
     },
   ];
 

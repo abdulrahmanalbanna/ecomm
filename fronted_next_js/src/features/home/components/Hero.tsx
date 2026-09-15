@@ -4,7 +4,7 @@ import Image from "next/image";
 
 import { useTranslations, useLocale } from "next-intl";
 import { useEffect, useState, type CSSProperties } from "react";
-import { categories, cities, IMG, pickLocale } from "../catalog";
+import { categories as staticCategories, cities, IMG, pickLocale, type Category } from "../catalog";
 import { IconArrow, IconCheck, IconShield, IconTruck, IconWrench } from "@/features/home/components/Icons";
 
 function RotatingStamp() {
@@ -30,9 +30,7 @@ function RotatingStamp() {
   );
 }
 
-
-
-export function Hero() {
+export function Hero({ categories }: { categories?: Category[] }) {
   const t = useTranslations("home.hero");
   const locale = useLocale();
   const [shipIndex, setShipIndex] = useState(0);
@@ -50,6 +48,7 @@ export function Hero() {
   }, []);
 
   const scrollTo = (id: string) => document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+  const displayCategories = (categories && categories.length > 0) ? categories : staticCategories;
 
   return (
     <section id="top" className="relative overflow-hidden bg-primary-900">
@@ -62,14 +61,6 @@ export function Hero() {
       <div className="relative mx-auto grid max-w-7xl items-center gap-10 px-4 py-12 md:py-16 lg:grid-cols-[1.05fr_1fr] lg:gap-14 lg:px-8">
         {/* copy side */}
         <div className="reveal in">
-          {/* <p className="flex w-fit items-center gap-2 rounded-full border border-secondary-500/40 bg-primary-800/80 px-3.5 py-1.5 text-[12px] font-extrabold text-secondary-300">
-            <span className="relative flex h-2 w-2">
-              <span className="absolute h-2 w-2 animate-ping rounded-full bg-secondary-400 opacity-70" />
-              <span className="h-2 w-2 rounded-full bg-secondary-400" />
-            </span>
-            {t("warehouse")}
-          </p> */}
-
           <h1 className="mt-5 font-display text-[40px] font-black leading-[1.15] text-background sm:text-[52px] lg:text-[58px]">
             {t("titleBefore")}
             <span className="relative mx-3 inline-block text-secondary-400">
@@ -173,8 +164,6 @@ export function Hero() {
                 {locale === "ar" ? "انضم إلى" : "Join"} <span className="font-display font-black text-secondary-400">+١٢٠</span> {t("projectsEquipped")}
               </p>
             </div>
-
-            {/* <RotatingStamp /> */}
           </div>
         </div>
       </div>
@@ -183,7 +172,7 @@ export function Hero() {
       <div className="relative border-t border-primary-700/60 bg-primary-950/60">
         <div className="mx-auto flex max-w-7xl items-center gap-6 overflow-x-auto no-scrollbar px-4 py-3.5 lg:px-8">
           <span className="shrink-0 text-[12px] font-extrabold text-secondary-400">{t("quickShop")}</span>
-          {categories.map((c) => (
+          {displayCategories.map((c: Category) => (
             <button
               key={c.id}
               onClick={() => document.getElementById(`rail-${c.id}`)?.scrollIntoView({ behavior: "smooth" })}

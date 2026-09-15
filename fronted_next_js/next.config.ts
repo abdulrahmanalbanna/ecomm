@@ -9,10 +9,15 @@ const nextConfig: NextConfig = {
   allowedDevOrigins: ["192.168.8.127"],
   images: {
     // Primary images are local in public/images (see src/features/home/catalog.ts).
-    // Remote pattern kept as fallback; qwenlm.ai upstream is very slow (~14s),
-    // which caused `upstream image response timed out` 500s from the optimizer.
+    // Remote patterns for Laravel media URLs (storage/app/public/*) and qwenlm.ai.
     remotePatterns: [
-      { protocol: "https", hostname: "image.qwenlm.ai", pathname: "/generated-images/**" }
+      { protocol: "https", hostname: "image.qwenlm.ai", pathname: "/generated-images/**" },
+      { protocol: "http", hostname: "localhost", pathname: "/storage/**" },
+      { protocol: "https", hostname: "localhost", pathname: "/storage/**" },
+      { protocol: "http", hostname: "127.0.0.1", pathname: "/storage/**" },
+      { protocol: "https", hostname: "127.0.0.1", pathname: "/storage/**" },
+      { protocol: "http", hostname: "192.168.8.127", pathname: "/storage/**" },
+      { protocol: "https", hostname: "192.168.8.127", pathname: "/storage/**" },
     ],
     formats: ["image/avif", "image/webp"],
     minimumCacheTTL: 31536000,

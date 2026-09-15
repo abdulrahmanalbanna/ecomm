@@ -4,7 +4,7 @@ import Image from "next/image";
 
 import { useRef, useState, type CSSProperties } from "react";
 import { useTranslations } from "next-intl";
-import { formatPrice, productById, type Product } from "../catalog";
+import { formatPrice, type Product } from "../catalog";
 import { useCart } from "@/stores/cart";
 import { IconArrow, IconCart, IconCheck, IconStar, IconTruck } from "@/features/home/components/Icons";
 
@@ -18,14 +18,19 @@ export function Stars({ rating }: { rating: number }) {
   );
 }
 
-export function AddButton({ id, compact = false }: { id: string; compact?: boolean }) {
+/**
+ * `name` is required because cart lines are now keyed by the backend
+ * `public_id` UUID, which the static fallback catalog cannot resolve.
+ * Callers must pass the product name from the shared live catalog.
+ */
+export function AddButton({ id, name, compact = false }: { id: string; name: string; compact?: boolean }) {
   const t = useTranslations("home.product");
   const { add } = useCart();
   const [done, setDone] = useState(false);
   const timeoutRef = useRef<number>(0);
 
   const onClick = () => {
-    add(id, t("addedToast", { name: productById(id).name }));
+    add(id, t("addedToast", { name }));
     setDone(true);
     window.clearTimeout(timeoutRef.current);
     timeoutRef.current = window.setTimeout(() => setDone(false), 1200);
@@ -137,7 +142,7 @@ export function ProductCard({ p, style }: { p: Product; style?: CSSProperties })
         ) : (
           <span className="text-[11px] text-muted-300">{t("shipsAll")}</span>
         )}
-        <AddButton id={p.id} compact />
+        <AddButton id={p.id} name={p.name} compact />
       </div>
     </article>
   );

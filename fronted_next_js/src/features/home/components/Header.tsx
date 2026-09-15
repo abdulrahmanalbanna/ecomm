@@ -4,8 +4,9 @@ import Image from "next/image";
 
 import { useEffect, useRef, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
-import { categories, formatPrice, pickLocale, products } from "../catalog";
+import { categories as staticCategories, formatPrice, pickLocale, type Category, type Product } from "../catalog";
 import { useShopSettings } from "../use-settings";
+import type { CatalogState } from "../use-catalog";
 import { branding } from "@/config/branding";
 import { useCart } from "@/stores/cart";
 import { useMounted } from "@/hooks/use-home";
@@ -26,14 +27,6 @@ export function Logo({ light = false }: { light?: boolean }) {
         priority
         className="h-12 w-auto rounded-lg object-contain"
       />
-      {/* <span className="leading-none">
-        <span className={`block font-display text-[22px] font-black tracking-tight ${light ? "text-background" : "text-primary-900"}`}>
-          {storeName}
-        </span>
-        <span className={`block text-[11.5px] font-bold ${light ? "text-secondary-400" : "text-secondary-600"}`}>
-          {t("brandTagline")}
-        </span>
-      </span> */}
     </a>
   );
 }
@@ -42,10 +35,6 @@ function Ticker() {
   const locale = useLocale();
   const { settings } = useShopSettings();
   const items = [...settings.ticker_items, ...settings.ticker_items];
-  // `suppressHydrationWarning` guards against the live API returning ticker
-  // items in a different order/text than the static fallback used for the
-  // server prerender (external changing data). The `useEffect`-driven update
-  // in `useShopSettings` replaces them right after hydration.
   return (
     <div className="overflow-hidden bg-primary-950 py-1.5" dir="ltr" suppressHydrationWarning>
       <div className="anim-ticker flex w-max items-center gap-8">
@@ -62,14 +51,33 @@ function Ticker() {
   );
 }
 
-function SearchBox({ onFocusSearch, inputId = "site-search" }: { onFocusSearch?: () => void; inputId?: string }) {
+function SearchBox({
+  onFocusSearch,
+  inputId = "site-search",
+  catalog,
+}: {
+  onFocusSearch?: () => void;
+  inputId?: string;
+  catalog: CatalogState;
+}) {
   const t = useTranslations("home");
-  const locale = useLocale();
   const [q, setQ] = useState("");
   const [open, setOpen] = useState(false);
   const boxRef = useRef<HTMLDivElement>(null);
 
-  const results = q.trim().length >= 2 ? products.filter((p) => p.name.includes(q.trim()) || p.spec.includes(q.trim())).slice(0, 6) : [];
+  const products = catalog.products;
+  const byId = catalog.byId;
+  const term = q.trim().toLowerCase();
+  const results =
+    term.length >= 2
+      ? products
+          .filter(
+            (p) =>
+              p.name.toLowerCase().includes(term) ||
+              p.spec.toLowerCase().includes(term),
+          )
+          .slice(0, 6)
+      : [];
 
   useEffect(() => {
     const onDoc = (e: MouseEvent) => {
@@ -78,6 +86,15 @@ function SearchBox({ onFocusSearch, inputId = "site-search" }: { onFocusSearch?:
     document.addEventListener("mousedown", onDoc);
     return () => document.removeEventListener("mousedown", onDoc);
   }, []);
+
+  // Build a category id -> name lookup using the live list first, then
+  // the static fallback. This is a safe Map used purely for label display.
+  const categoryName = (id: string) => {
+    const live = catalog.categories.find((c: Category) => c.id === id);
+    if (live) return live.name;
+    const fallback = staticCategories.find((c) => c.id === id);
+    return fallback?.name ?? "";
+  };
 
   return (
     <div ref={boxRef} className="relative w-full">
@@ -103,12 +120,12 @@ function SearchBox({ onFocusSearch, inputId = "site-search" }: { onFocusSearch?:
         </button>
       </div>
 
-      {open && q.trim().length >= 2 && (
+      {open && term.length >= 2 && (
         <div className="anim-rise absolute inset-x-0 top-[calc(100%+8px)] z-50 overflow-hidden rounded-xl border border-muted-200 bg-surface shadow-lift">
           {results.length === 0 ? (
             <p className="px-4 py-5 text-center text-[13px] font-bold text-muted-400">{t("noResults", { query: q })}</p>
           ) : (
-            results.map((p) => (
+            results.map((p: Product) => (
               <a
                 key={p.id}
                 href={`#rail-${p.category}`}
@@ -118,7 +135,7 @@ function SearchBox({ onFocusSearch, inputId = "site-search" }: { onFocusSearch?:
                 <Image src={p.image} alt="" width={44} height={44} className="h-11 w-11 rounded-lg object-cover" />
                 <span className="flex-1">
                   <span className="block truncate text-[13px] font-bold text-muted-900">{p.name}</span>
-                  <span className="text-[11.5px] text-muted-400">{(() => { const c = categories.find((c) => c.id === p.category); return c ? c.name : ""; })()}</span>
+                  <span className="text-[11.5px] text-muted-400">{categoryName(p.category)}</span>
                 </span>
                 <span className="font-display text-sm font-extrabold text-primary-800 tabular">
                   {formatPrice(p.price)} <span className="text-[10px] text-muted-400">SAR</span>
@@ -132,16 +149,14 @@ function SearchBox({ onFocusSearch, inputId = "site-search" }: { onFocusSearch?:
   );
 }
 
-export function Header() {
+export function Header({ catalog }: { catalog: CatalogState }) {
   const t = useTranslations("home");
-  const locale = useLocale();
   const { count, badgeKey, setDrawerOpen } = useCart();
   const [scrolled, setScrolled] = useState(false);
   const [activeCat, setActiveCat] = useState<string | null>(null);
-  // `count` is persisted in localStorage (client-only). Gate it behind mount
-  // so the first client render matches the server (count = 0) and avoids a
-  // hydration mismatch when the cart is non-empty.
   const mounted = useMounted();
+
+  const categories = catalog.categories.length > 0 ? catalog.categories : staticCategories;
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40);
@@ -167,7 +182,7 @@ export function Header() {
           <Logo />
 
           <div className="hidden flex-1 md:block">
-            <SearchBox inputId="site-search-desktop" />
+            <SearchBox inputId="site-search-desktop" catalog={catalog} />
           </div>
 
           <div className="mr-auto flex items-center gap-1.5 md:mr-0 md:gap-2">
@@ -199,20 +214,11 @@ export function Header() {
               </span>
             </a>
 
-            {/* <button
-              onClick={() => document.getElementById("site-search")?.focus()}
-              className="grid h-11 w-11 place-items-center rounded-xl border border-muted-200 bg-surface text-primary-800 transition-colors hover:border-secondary-500 md:hidden"
-              aria-label={t("search")}
-            >
-              <IconSearch size={25} />
-            </button> */}
-
             <button
               onClick={() => toastFn?.(t("loginSoon"))}
               className="relative flex h-10 items-center gap-2 rounded-xl border border-muted-200 bg-surface p-2 text-[13px] font-extrabold text-primary-900 transition-colors hover:border-secondary-500"
             >
               <IconUser size={25} className="text-primary-950" />
-              {/* {t("account")} */}
             </button>
 
             <button
@@ -221,7 +227,6 @@ export function Header() {
               aria-label={mounted ? t("cartCount", { count }) : t("cartCount", { count: 0 })}
             >
               <IconCart size={25} />
-              {/* <span className="hidden sm:inline">{t("cart.label")}</span> */}
               {mounted && count > 0 && (
                 <span
                   key={badgeKey}
@@ -236,7 +241,7 @@ export function Header() {
 
         {/* mobile search */}
         <div className="px-4 pb-3 md:hidden">
-          <SearchBox />
+          <SearchBox catalog={catalog} />
         </div>
 
         {/* categories nav */}
@@ -249,7 +254,7 @@ export function Header() {
               {t("allCategories")}
               <IconChevron size={13} className="rotate-90" />
             </button>
-            {categories.map((c) => (
+            {categories.map((c: Category) => (
               <button
                 key={c.id}
                 onClick={() => {

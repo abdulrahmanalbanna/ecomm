@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { getPublicSettings, type ShopSettings } from "@/features/home/api";
-import { FREE_SHIPPING_THRESHOLD, features, stats, tickerItems } from "@/features/home/catalog";
+import { FREE_SHIPPING_THRESHOLD, features, stats } from "@/features/home/catalog";
 
 /** Offline fallback built from the static `catalog.ts` data. */
 const fallbackSettings: ShopSettings = {
@@ -19,7 +19,7 @@ const fallbackSettings: ShopSettings = {
   footer: null,
   features: features.map((f) => ({ id: f.id, title: f.title, desc: f.desc, icon: f.icon })),
   stats: stats.map((s) => ({ value: s.value, suffix: s.suffix, label: s.label })),
-  ticker_items: [...tickerItems],
+  ticker_items: [],
   free_shipping_threshold: FREE_SHIPPING_THRESHOLD,
   currency: "SAR",
   maintenance_mode: false,
@@ -32,8 +32,10 @@ async function loadSettings(): Promise<ShopSettings> {
   if (cached) return cached;
   if (!inflight) {
     inflight = getPublicSettings()
-      .then((res) => {
-        cached = res.data;
+      .then((settings) => {
+        console.log("settings", settings);
+
+        cached = settings;
         return cached;
       })
       .catch(() => fallbackSettings)

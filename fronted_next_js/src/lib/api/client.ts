@@ -27,3 +27,122 @@ export const apiClient={
  patch:<T>(path:string,body:unknown,init?:RequestInit)=>request<T>(path,{...init,method:"PATCH",body:JSON.stringify(body)}),
  delete:<T>(path:string,init?:RequestInit)=>request<T>(path,{...init,method:"DELETE"})
 };
+
+/**
+ * Transform a Laravel API response envelope into typed data.
+ * Laravel public endpoints return { data: <resource>, meta?:... }.
+ * We extract the `data` field so callers get the resource directly.
+ */
+export function extractData<T>(response: LaravelResponse<T>): T {
+  return response.data;
+}
+
+/**
+ * Transform Laravel CategoryResource into the frontend Category type.
+ * Laravel CategoryResource fields: id, parent_id, slug, name, description,
+ * image_url, is_active, sort_order, path, depth, children, created_at, updated_at
+ */
+export interface LaravelCategory {
+  id: number;
+  parent_id?: number;
+  slug: string;
+  name: string;
+  description: string;
+  image_url?: string | null;
+  is_active: boolean;
+  sort_order?: number;
+  path?: string;
+  depth?: number;
+  children?: LaravelCategory[];
+  created_at?: string;
+  updated_at?: string;
+}
+
+/**
+ * Transform Laravel ProductPublicResource into the frontend Product type.
+ * Laravel ProductPublicResource fields: public_id, slug, name, description,
+ * short_description, brand, tags, media, specifications, is_featured,
+ * seo_title, seo_description, category, attributes, variants
+ */
+export interface LaravelProduct {
+  public_id: string;
+  slug: string;
+  name: string;
+  description: string;
+  short_description?: string | null;
+  brand?: { id: number; name: string; slug?: string | null; is_active: boolean } | null;
+  tags?: Array<{ id: number; name: string; slug?: string | null; is_active: boolean }> | null;
+  media?: Array<{ id: number; url?: string | null; alt_text?: string | null; type?: string | null }> | null;
+  specifications?: Record<string, string> | null;
+  is_featured: boolean;
+  seo_title?: string | null;
+  seo_description?: string | null;
+  category?: LaravelCategory | null;
+  attributes?: Array<{ id: number; name: string; code?: string | null; is_active: boolean }> | null;
+  variants?: Array<{ id: number; sku?: string | null; name?: string | null; price: number; compare_at_price?: number | null; weight_grams?: number | null; dimensions?: Record<string, string> | null; is_active: boolean }> | null;
+}
+
+/**
+ * Transform Laravel ProductVariantPublicResource into a frontend-friendly variant.
+ * Laravel ProductVariantPublicResource fields: id, sku, name, price,
+ * compare_at_price, weight_grams, dimensions, attributes, media, is_active
+ */
+export interface LaravelProductVariant {
+  id: number;
+  sku?: string | null;
+  name?: string | null;
+  price: string;
+  compare_at_price?: string | null;
+  weight_grams?: number | null;
+  dimensions?: Record<string, string> | null;
+  attributes?: Array<{ id: number; name: string; code?: string | null; is_active: boolean }> | null;
+  media?: Array<{ id: number; url?: string | null; alt_text?: string | null; type?: string | null }> | null;
+  is_active: boolean;
+}
+
+/**
+ * Transform Laravel PublicSettingsResource into the frontend ShopSettings type.
+ * Laravel returns all whitelisted public settings cast to PHP values.
+ */
+export interface LaravelShopSettings {
+  store: {
+    name: string;
+    phone?: string | null;
+    logo?: string | null;
+    footer_logo?: string | null;
+    fav_icon?: string | null;
+    copyright_text?: string | null;
+    currency: string;
+  };
+  header?: Record<string, unknown> | null;
+  footer?: Record<string, unknown> | null;
+  features: Array<{ id: string; title: string; desc: string; icon: string }>;
+  stats: Array<{ value: number; suffix: string; label: string }>;
+  ticker_items: string[];
+  free_shipping_threshold: number;
+  currency: string;
+  maintenance_mode: boolean;
+}
+
+/**
+ * Transform Laravel CategoryPublicController index response.
+ * The controller returns { data: CategoryResource[] }
+ */
+export interface LaravelCategoryResponse {
+  data: LaravelCategory[];
+  meta?: Record<string, unknown>;
+}
+
+/**
+ * Transform Laravel ProductPublicController index response.
+ * The controller returns { data: ProductPublicResource[], meta: pagination }
+ */
+export interface LaravelProductListResponse {
+  data: LaravelProduct[];
+  meta: {
+    current_page: number;
+    last_page: number;
+    per_page: number;
+    total: number;
+  };
+}

@@ -5,20 +5,17 @@ import Image from "next/image";
 import { Fragment, useRef, useState, type CSSProperties, type ReactNode } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import {
-  bestSellers,
   brands,
-  byCategory,
-  categories,
+  categories as staticCategories,
   formatPrice,
   IMG,
-  newArrivals,
   pickLocale,
-  productById,
-  products,
+  products as staticProducts,
   projects,
+  type Category,
+  type Product,
 } from "../catalog";
 import { useShopSettings } from "../use-settings";
-import { useCart } from "@/stores/cart";
 import { useCountUp, useInView, useRevealObserver } from "@/hooks/use-home";
 import { AddButton, ProductCard, PromoTile, Stars } from "@/features/home/components/ProductCard";
 import {
@@ -85,11 +82,15 @@ function SectionHead({
 }
 
 /* ============ 1. category tiles ============ */
-export function CategoryTiles() {
+export function CategoryTiles({
+  categories,
+}: {
+  categories: Category[];
+}) {
   const t = useTranslations("home.categoriesSection");
-  const locale = useLocale();
   const ref = useRevealObserver<HTMLDivElement>();
   const railRef = useRef<HTMLDivElement>(null);
+  const displayCategories = categories.length > 0 ? categories : staticCategories;
   const scroll = (dir: 1 | -1) =>
     railRef.current?.scrollBy({ left: dir * 320 * (document.documentElement.dir === "rtl" ? 1 : -1), behavior: "smooth" });
 
@@ -105,7 +106,7 @@ export function CategoryTiles() {
 
       <div className="reveal relative">
         <div ref={railRef} className="flex gap-4 overflow-x-auto no-scrollbar pb-2 snap-x" style={{ scrollSnapType: "x proximity" }}>
-          {categories.map((c, i) => (
+          {displayCategories.map((c: Category, i: number) => (
             <button
               key={c.id}
               style={{ "--rv-delay": `${i * 60}ms` } as CSSProperties}
@@ -121,12 +122,6 @@ export function CategoryTiles() {
               />
               <div className="absolute inset-x-0 top-0 h-full bg-gradient-to-t from-primary-950 via-primary-950/35 to-transparent" />
               <div className="absolute inset-x-0 bottom-0 p-4">
-                {/* <span
-                  className="mb-2 grid h-9 w-9 place-items-center rounded-lg text-primary-950 shadow-soft"
-                  style={{ backgroundColor: c.tint }}
-                >
-                  {categoryIcon(c.id, 19)}
-                </span> */}
                 <h3 className="font-display text-[16px] font-extrabold text-background">{c.name}</h3>
                 <p className="mt-0.5 line-clamp-1 text-[11.5px] font-medium text-primary-100/70">{c.desc}</p>
                 <span className="mt-2 inline-flex items-center gap-1 text-[11.5px] font-extrabold text-secondary-400 opacity-0 transition-all duration-300 group-hover:opacity-100">
@@ -162,18 +157,26 @@ const promoCopy: Record<string, { title: string; sub: string }> = {
   drinks: { title: "drinks.title", sub: "drinks.sub" },
 };
 
-export function ProductRail({ catId }: { catId: string }) {
+export function ProductRail({
+  catId,
+  items,
+}: {
+  catId: string;
+  items: Product[];
+}) {
   const t = useTranslations("home.categoriesSection");
-  const locale = useLocale();
   const promoT = useTranslations("home.promo");
-  const cat = categories.find((c) => c.id === catId)!;
-  const items = byCategory(catId);
+  const cat = staticCategories.find((c) => c.id === catId) ?? staticCategories[0];
   const ref = useRevealObserver<HTMLElement>();
   const railRef = useRef<HTMLDivElement>(null);
   const scroll = (dir: 1 | -1) =>
     railRef.current?.scrollBy({ left: dir * 600 * (document.documentElement.dir === "rtl" ? 1 : -1), behavior: "smooth" });
 
   const goToProjects = () => document.getElementById("projects")?.scrollIntoView({ behavior: "smooth" });
+
+  // If the live catalog did not return items for this slug (e.g. unknown
+  // backend slug), fall back to the static list so the rail still renders.
+  const displayItems = items.length > 0 ? items : staticProducts.filter((p) => p.category === catId);
 
   return (
     <section id={`rail-${catId}`} ref={ref} className="scroll-mt-36 border-t border-muted-200/60 py-10">
@@ -183,8 +186,8 @@ export function ProductRail({ catId }: { catId: string }) {
             {categoryIcon(catId, 27)}
           </span>
           <div className="flex-1">
-            <h2 className="font-display text-[22px] font-black text-muted-900 sm:text-[24px]">{cat.name}</h2>
-            <p className="text-[12.5px] font-medium text-muted-400">{cat.desc} — {t("products", { count: items.length })}</p>
+            <h2 className="font-display text-[22px] font-black text-muted-900 sm:text-[24px]">{cat?.name ?? catId}</h2>
+            <p className="text-[12.5px] font-medium text-muted-400">{cat?.desc ?? ""} — {t("products", { count: displayItems.length })}</p>
           </div>
           <div className="hidden gap-2 sm:flex">
             <button onClick={() => scroll(1)} aria-label={t("previous")} className="grid h-10 w-10 place-items-center rounded-xl border border-muted-200 bg-surface text-primary-900 transition-all hover:border-secondary-500 hover:text-secondary-600 active:scale-90">
@@ -201,7 +204,7 @@ export function ProductRail({ catId }: { catId: string }) {
           className="reveal flex gap-4 overflow-x-auto no-scrollbar pb-2 snap-x"
           style={{ scrollSnapType: "x proximity", ["--rv-delay" as string]: "90ms" }}
         >
-          {items.map((p, i) => (
+          {displayItems.map((p: Product, i: number) => (
             <Fragment key={p.id}>
               <div className="w-60 shrink-0 snap-start md:w-64">
                 <ProductCard p={p} />
@@ -209,10 +212,10 @@ export function ProductRail({ catId }: { catId: string }) {
               {i === 3 && (
                 <div className="shrink-0 snap-start">
                   <PromoTile
-                    title={promoT(promoCopy[catId].title)}
-                    sub={promoT(promoCopy[catId].sub)}
+                    title={promoT(promoCopy[catId]?.title ?? "coffee.title")}
+                    sub={promoT(promoCopy[catId]?.sub ?? "coffee.sub")}
                     cta={promoT("orderPackage")}
-                    image={catId === "bakery" || catId === "cooking" ? IMG.banner : cat.image}
+                    image={catId === "bakery" || catId === "cooking" ? IMG.banner : cat?.image ?? IMG.hero}
                     onCta={goToProjects}
                   />
                 </div>
@@ -240,7 +243,6 @@ export function ProductRail({ catId }: { catId: string }) {
 /* ============ 3. projects grid ============ */
 export function ProjectsGrid() {
   const t = useTranslations("home.projects");
-  const locale = useLocale();
   const ref = useRevealObserver<HTMLElement>();
   return (
     <section id="projects" ref={ref} className="scroll-mt-32 py-14">
@@ -280,12 +282,23 @@ export function ProjectsGrid() {
 }
 
 /* ============ 4. tabs: new / bestsellers ============ */
-export function TabsSection() {
+export function TabsSection({
+  byId,
+}: {
+  byId: Map<string, Product>;
+}) {
   const t = useTranslations("home.weekly");
   const ref = useRevealObserver<HTMLElement>();
   const [tab, setTab] = useState<"new" | "best">("new");
-  const ids = tab === "new" ? newArrivals : bestSellers;
-  const list = ids.map(productById);
+
+  // Pull live items from the shared lookup; if the live catalog has not
+  // loaded (or returned a sparse set) we fall back to the static list
+  // so the section never renders empty.
+  const liveList = Array.from(byId.values());
+  const newItems = liveList.length > 0 ? liveList : staticProducts;
+  // Cheap heuristic: "new arrivals" = first half, "best sellers" = second half.
+  const half = Math.max(1, Math.floor(newItems.length / 2));
+  const list = tab === "new" ? newItems.slice(0, half) : newItems.slice(half);
 
   return (
     <section ref={ref} className="border-t border-muted-200/60 bg-surface py-14">
@@ -316,7 +329,7 @@ export function TabsSection() {
         </div>
 
         <div key={tab} className="grid grid-cols-2 gap-4 md:grid-cols-3 xl:grid-cols-4">
-          {list.map((p, i) => (
+          {list.map((p: Product, i: number) => (
             <div key={`${tab}-${p.id}`} className="anim-rise" style={{ animationDelay: `${i * 55}ms` }}>
               <ProductCard p={p} />
             </div>
@@ -387,7 +400,6 @@ function StatBlock({ value, suffix, label, delay }: { value: number; suffix: str
 
 export function WhyUs() {
   const t = useTranslations("home.why");
-  const locale = useLocale();
   const ref = useRevealObserver<HTMLElement>();
   const { settings } = useShopSettings();
   const stats = settings.stats;
