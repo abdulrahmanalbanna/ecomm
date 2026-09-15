@@ -1,3 +1,16 @@
+/**
+ * Catalog domain types + OFFLINE FALLBACK data.
+ *
+ * Live data flow (configured via `NEXT_PUBLIC_API_URL`, see `.env.example`):
+ * - Storefront settings (`tickerItems`, `stats`, `features`,
+ *   `FREE_SHIPPING_THRESHOLD`) → `GET {NEXT_PUBLIC_API_URL}/v1/settings`
+ *   via `getPublicSettings()` (`./api`) consumed through `useShopSettings()`
+ *   (`./use-settings`). The statics below are only the fallback rendered
+ *   until the API responds (or when it is unreachable).
+ * - Categories / products → `GET {NEXT_PUBLIC_API_URL}/v1/catalog/...`
+ *   (see `./api`). The static `categories`/`products` below remain as
+ *   fallback until that migration lands.
+ */
 export type Category = {
   id: string;
   name: string;
@@ -153,7 +166,7 @@ export const features = [
 ];
 
 export const stats = [
-  { value: 50, suffix: "+", label: "مدينة نغطيها بالشحن" },
+  { value: 30, suffix: "+", label: "مدينة نغطيها بالشحن" },
   { value: 120, suffix: "+", label: "مشروع جُهّز معنا" },
   { value: 15, suffix: "+", label: "سنة في السوق السعودي" },
   { value: 98, suffix: "%", label: "رضا عملائنا" },
@@ -161,11 +174,11 @@ export const stats = [
 
 export const tickerItems = [
   "شحن مجاني للطلبات فوق ١٬٥٠٠ ر.س",
-  "ضمان سنتان على جميع المكائن",
+  // "ضمان سنتان على جميع المكائن",
   "تقسيط متاح عبر تمارا",
-  "تركيب وتشغيل داخل الرياض وجدة",
-  "خصم ٥٪ على أول طلب بكود TG5",
-  "استشارة تجهيز مجانية لمشاريعك",
+  // "تركيب وتشغيل داخل الرياض وجدة",
+  // "خصم ٥٪ على أول طلب بكود TG5",
+  // "استشارة تجهيز مجانية لمشاريعك",
 ];
 
 

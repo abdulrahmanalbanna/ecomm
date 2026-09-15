@@ -124,8 +124,22 @@ $SqlFiles = @(
 )
 
 # --- Step 5: Apply SQL files ---------------------------------------------------
+# NOTE (UTF-8 safety): SQL files are piped to psql as RAW BYTES via
+# `docker cp` + `psql -f` inside the container. NEVER use
+# `Get-Content ... | docker compose exec ... psql` here: PowerShell 5.1
+# decodes the file with the system ANSI code page and re-encodes piped
+# strings with $OutputEncoding (often US-ASCII), which replaces every
+# non-ASCII byte (Arabic, —, •, ©, …) with '?'.
 Write-Host "[5/6] Applying schema files ($($SqlFiles.Count) files)..."
 Write-Host ""
+
+# Resolve the running container ID once (docker cp needs it).
+$PgsqlContainerId = (docker compose ps -q $PgsqlService 2>&1 | Select-Object -First 1).ToString().Trim()
+if (-not $PgsqlContainerId) {
+    Write-Host " FAILED" -ForegroundColor Red
+    Write-Host "ERROR: Could not resolve container ID for service '$PgsqlService'." -ForegroundColor Red
+    exit 1
+}
 
 $applied = 0
 foreach ($sqlFile in $SqlFiles) {
@@ -138,19 +152,28 @@ foreach ($sqlFile in $SqlFiles) {
 
     Write-Host "  Applying: $sqlFile ..." -NoNewline
 
-    $sqlContent = Get-Content $filePath -Raw
-    
     # Save current Preference and allow stderr output without throwing NativeCommandError
     $oldEap = $ErrorActionPreference
     $ErrorActionPreference = "Continue"
 
-    if ($envPass) {
-        $fileOut = $sqlContent | docker compose exec -T -e "PGPASSWORD=$envPass" $PgsqlService psql -U $Username -d $Database -v ON_ERROR_STOP=1 -v client_min_messages=warning --quiet 2>&1
+    $containerPath = "/tmp/schema_$sqlFile"
+    $fileOut = $null
+    $exitStatus = 1
+
+    docker cp "$filePath" "${PgsqlContainerId}:$containerPath" 2>&1 | Out-Null
+    if ($LASTEXITCODE -eq 0) {
+        if ($envPass) {
+            $fileOut = docker compose exec -T -e "PGPASSWORD=$envPass" -e "PGCLIENTENCODING=UTF8" $PgsqlService psql -U $Username -d $Database -v ON_ERROR_STOP=1 -v client_min_messages=warning --quiet -f $containerPath 2>&1
+        } else {
+            $fileOut = docker compose exec -T -e "PGCLIENTENCODING=UTF8" $PgsqlService psql -U $Username -d $Database -v ON_ERROR_STOP=1 -v client_min_messages=warning --quiet -f $containerPath 2>&1
+        }
+        $exitStatus = $LASTEXITCODE
+        # Best-effort cleanup of the staged file inside the container.
+        docker compose exec -T $PgsqlService rm -f $containerPath 2>&1 | Out-Null
     } else {
-        $fileOut = $sqlContent | docker compose exec -T $PgsqlService psql -U $Username -d $Database -v ON_ERROR_STOP=1 -v client_min_messages=warning --quiet 2>&1
+        $fileOut = "docker cp failed for $sqlFile"
     }
 
-    $exitStatus = $LASTEXITCODE
     $ErrorActionPreference = $oldEap
 
     if ($exitStatus -ne 0) {

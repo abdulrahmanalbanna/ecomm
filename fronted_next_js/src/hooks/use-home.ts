@@ -61,6 +61,20 @@ export function useCountUp(target: number, active: boolean, duration = 1600) {
   return value;
 }
 
+/**
+ * `true` only after the component has mounted on the client.
+ * Use it to gate client-only persisted state (e.g. zustand `persist` cart
+ * count from localStorage) so the first client render matches the server
+ * HTML and doesn't trigger a React hydration mismatch.
+ */
+export function useMounted() {
+  const [mounted, setMounted] = useState(false);
+  // Intentional post-hydration sync; not derivable during render.
+  // eslint-disable-next-line react-hooks/set-state-in-effect
+  useEffect(() => setMounted(true), []);
+  return mounted;
+}
+
 export function useInView<T extends HTMLElement>(threshold = 0.3) {
   const ref = useRef<T | null>(null);
   const [inView, setInView] = useState(false);

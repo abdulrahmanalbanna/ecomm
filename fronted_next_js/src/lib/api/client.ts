@@ -2,8 +2,17 @@ export type LaravelResponse<T>={data:T;message?:string;meta?:Record<string,unkno
 export type LaravelValidationErrors=Record<string,string[]>;
 export class ApiError extends Error {constructor(public status:number,public validationErrors?:LaravelValidationErrors,message?:string){super(message??`API request failed (${status})`);this.name="ApiError";}}
 
-const baseUrl=process.env.NEXT_PUBLIC_API_URL;
-if(!baseUrl) console.warn("NEXT_PUBLIC_API_URL is not configured; API calls will fail until it is set.");
+const rawBaseUrl = process.env.NEXT_PUBLIC_API_URL;
+if (!rawBaseUrl) console.warn("NEXT_PUBLIC_API_URL is not configured; API calls will fail until it is set.");
+
+/**
+ * Base URL for the Laravel API, configured via the `NEXT_PUBLIC_API_URL`
+ * environment variable (e.g. `http://localhost:8000/api`).
+ * Trailing slashes are stripped so callers can safely do `${base}/v1/...`.
+ */
+export const getApiBaseUrl = () => (rawBaseUrl ?? "").replace(/\/+$/, "");
+
+const baseUrl = getApiBaseUrl();
 
 async function request<T>(path:string,init:RequestInit={}):Promise<LaravelResponse<T>>{
  const response=await fetch(`${baseUrl ?? ""}${path}`,{...init,headers:{Accept:"application/json","Content-Type":"application/json",...(init.headers??{})},cache:"no-store"});

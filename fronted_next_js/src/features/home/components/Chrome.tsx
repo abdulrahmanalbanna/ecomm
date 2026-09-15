@@ -4,8 +4,10 @@ import Image from "next/image";
 
 import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
-import { categories, formatPrice, FREE_SHIPPING_THRESHOLD, products } from "../catalog";
+import { categories, formatPrice, products } from "../catalog";
+import { useShopSettings } from "../use-settings";
 import { useCart } from "@/stores/cart";
+import { useMounted } from "@/hooks/use-home";
 import { Logo } from "./Header";
 import {
   IconCart,
@@ -49,13 +51,23 @@ export function CartDrawer() {
   const t = useTranslations("home.cart");
   const { lines, drawerOpen, setDrawerOpen, inc, dec, remove, clear, subtotal, count } = useCart();
   const [placed, setPlaced] = useState(false);
+  // Generate the order number once when the order is placed (never during
+  // render): `Math.random()` in render returns a different value on the
+  // server vs the client and triggers a hydration mismatch.
+  const [orderNo, setOrderNo] = useState<string | null>(null);
+  const { settings } = useShopSettings();
+  const FREE_SHIPPING_THRESHOLD = settings.free_shipping_threshold;
   const vat = Math.round(subtotal * 0.15);
   const remaining = Math.max(0, FREE_SHIPPING_THRESHOLD - subtotal);
   const progress = Math.min(100, (subtotal / FREE_SHIPPING_THRESHOLD) * 100);
 
-  useEffect(() => {
-    if (!drawerOpen) setPlaced(false);
-  }, [drawerOpen]);
+  // Reset the success state when the drawer closes (done in the close
+  // handlers below instead of an effect so there is no cascading render).
+  const closeDrawer = () => {
+    setPlaced(false);
+    setOrderNo(null);
+    setDrawerOpen(false);
+  };
 
   useEffect(() => {
     document.body.style.overflow = drawerOpen ? "hidden" : "";
@@ -66,11 +78,16 @@ export function CartDrawer() {
 
   if (!drawerOpen) return null;
 
+  const placeOrder = () => {
+    setOrderNo(`TG-${Math.floor(100000 + Math.random() * 900000)}`);
+    setPlaced(true);
+  };
+
   return (
     <div className="fixed inset-0 z-[80]">
       <button
         aria-label={t("close")}
-        onClick={() => setDrawerOpen(false)}
+        onClick={closeDrawer}
         className="anim-fade absolute inset-0 h-full w-full bg-primary-950/55 backdrop-blur-[2px]"
       />
       <aside className="anim-drawer absolute inset-y-0 left-0 flex w-full max-w-md flex-col bg-background shadow-lift" role="dialog" aria-label={t("title")}>
@@ -84,7 +101,7 @@ export function CartDrawer() {
             <span className="rounded-full bg-primary-50 px-2.5 py-0.5 text-[12px] font-extrabold text-primary-800 tabular">{t("items", { count })}</span>
           </h2>
           <button
-            onClick={() => setDrawerOpen(false)}
+            onClick={closeDrawer}
             className="grid h-9 w-9 place-items-center rounded-lg border border-muted-200 text-muted-500 transition-colors hover:border-danger hover:text-danger"
             aria-label={t("close")}
           >
@@ -101,12 +118,12 @@ export function CartDrawer() {
             <h3 className="font-display text-[22px] font-black text-muted-900">{t("successTitle")}</h3>
             <p className="text-[14px] font-medium leading-7 text-muted-500">
               {t("successDesc")}
-              <span className="mx-1 font-black text-primary-800 tabular">TG-{Math.floor(100000 + Math.random() * 900000)}</span>
+              <span className="mx-1 font-black text-primary-800 tabular">{orderNo}</span>
             </p>
             <button
               onClick={() => {
                 clear();
-                setDrawerOpen(false);
+                closeDrawer();
               }}
               className="mt-2 rounded-xl bg-primary-900 px-6 py-3 font-display text-[14px] font-extrabold text-secondary-300 transition-all hover:bg-primary-800 active:scale-95"
             >
@@ -206,7 +223,7 @@ export function CartDrawer() {
                 </span>
               </p>
               <button
-                onClick={() => setPlaced(true)}
+                onClick={placeOrder}
                 className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-primary-900 py-3.5 font-display text-[15px] font-extrabold text-secondary-300 transition-all duration-300 hover:bg-primary-800 active:scale-[0.98]"
               >
                 {t("checkout")}
@@ -362,6 +379,9 @@ export function MobileNav() {
   const t = useTranslations("home.mobile");
   const { count, setDrawerOpen, badgeKey } = useCart();
   const [active, setActive] = useState("home");
+  // Same localStorage-hydration guard as Header: only show the persisted
+  // count after mount so SSR HTML (count = 0) matches the first client render.
+  const mounted = useMounted();
 
   const items = [
     { id: "home", label: t("home"), icon: <IconHome size={21} />, go: () => document.getElementById("top")?.scrollIntoView({ behavior: "smooth" }) },
@@ -387,7 +407,7 @@ export function MobileNav() {
           >
             <span className={`relative transition-transform duration-200 ${active === it.id ? "-translate-y-0.5" : ""}`}>
               {it.icon}
-              {it.id === "cart" && count > 0 && (
+              {it.id === "cart" && mounted && count > 0 && (
                 <span key={badgeKey} className="anim-badge-pop absolute -left-2 -top-1.5 grid h-4 min-w-4 place-items-center rounded-full bg-secondary-500 px-0.5 text-[9.5px] font-black text-primary-950 tabular">
                   {count}
                 </span>

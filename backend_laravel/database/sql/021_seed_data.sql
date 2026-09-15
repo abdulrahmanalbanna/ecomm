@@ -16,6 +16,11 @@
 
 BEGIN;
 
+-- This file contains UTF-8 content (Arabic + typographic characters).
+-- Ensure the psql session interprets incoming bytes as UTF-8 regardless of
+-- the client's default encoding.
+SET LOCAL client_encoding = 'UTF8';
+
 -- ===========================================================================
 -- 1. ROLES
 -- ===========================================================================
@@ -210,7 +215,99 @@ VALUES
 ON CONFLICT (key) DO NOTHING;
 
 -- ==========================================================================
--- 7. CITIES
+-- 6b. HOMEPAGE CONTENT (extracted from fronted_next_js/src/features/home/catalog.ts,
+--     src/config/branding.ts, Header.tsx, Chrome.tsx Footer, messages/ar.json)
+-- ==========================================================================
+INSERT INTO business_settings (key, value, type, is_public, is_active, description)
+VALUES
+(
+    'features',
+    $json$
+    [
+      {"id":"f1","title":"استيراد مباشر","desc":"نستورد من المصانع الأم مباشرة، فكل قطعة أصلية وبسعر بلا وسطاء.","icon":"cargo","is_active":true},
+      {"id":"f2","title":"وكلاء معتمدون","desc":"وكالة رسمية لعلامات عالمية مع شهادات اعتماد وضمان مصنعي.","icon":"shield","is_active":true},
+      {"id":"f3","title":"صيانة وقطع غيار","desc":"فريق فني متنقل وقطع غيار أصلية تصلك أينما كان مشروعك.","icon":"wrench","is_active":true},
+      {"id":"f4","title":"استشارات مجانية","desc":"نرافقك من رسم المخطط حتى أول تشغيل، بتوصيات تناسب ميزانيتك.","icon":"compass","is_active":true}
+    ]
+    $json$,
+    'json', TRUE, TRUE,
+    'Homepage business features'),
+(
+    'stats',
+    $json$
+    [
+      {"value":50,"suffix":"+","label":"مدينة نغطيها بالشحن","is_active":true},
+      {"value":120,"suffix":"+","label":"مشروع جُهّز معنا","is_active":true},
+      {"value":15,"suffix":"+","label":"سنة في السوق السعودي","is_active":true},
+      {"value":98,"suffix":"%","label":"رضا عملائنا","is_active":true}
+    ]
+    $json$,
+    'json', TRUE, TRUE,
+    'Homepage business statistics'),
+(
+    'ticker_items',
+    $json$
+    [
+      {"text":"شحن مجاني للطلبات فوق ١٬٥٠٠ ر.س","is_active":true},
+      {"text":"ضمان سنتان على جميع المكائن","is_active":true},
+      {"text":"تقسيط متاح عبر تمارا","is_active":true},
+      {"text":"تركيب وتشغيل داخل الرياض وجدة","is_active":true},
+      {"text":"خصم ٥٪ على أول طلب بكود TG5","is_active":true},
+      {"text":"استشارة تجهيز مجانية لمشاريعك","is_active":true}
+    ]
+    $json$,
+    'json', TRUE, TRUE,
+    'Homepage promotional ticker items'),
+(
+    'homepage.header',
+    $json$
+    {
+      "store_name_ar": "تجاهيز",
+      "store_name_en": "TAGAHAYEEZ",
+      "tagline_ar": "معدات تجارية للمطاعم والمقاهي والمخابز",
+      "tagline_en": "Commercial equipment for restaurants, cafés and bakeries",
+      "logo_header": "/branding/logo_header.png",
+      "logo_footer": "/branding/logo_footer.png",
+      "logo_metadata": "/branding/logo_metadata.png",
+      "phone_display": "920 012 345",
+      "phone_href": "tel:920000000",
+      "whatsapp_url": "https://wa.me/966500000000",
+      "search_placeholder_ar": "ابحث عن ماكينة، مطحنة، فرن…",
+      "nav_all_categories_ar": "كل الأقسام",
+      "nav_installments_note_ar": "تقسيط متاح عبر تمارا",
+      "is_active": true
+    }
+    $json$,
+    'json', TRUE, TRUE,
+    'Homepage header: branding, logos, phone, whatsapp, search and nav copy'),
+(
+    'homepage.footer',
+    $json$
+    {
+      "description_ar": "بيت المعدات التجارية في السعودية — من ماكينة الإسبريسو إلى خط مخبز متكامل، بوكالات معتمدة وفريق فني يوصلك حتى باب محلك.",
+      "description_en": "The commercial equipment house in Saudi Arabia — from an espresso machine to a complete bakery line, with authorized agencies and a technical team that delivers to your door.",
+      "address_ar": "الرياض، مستودعات تجاهيز",
+      "address_en": "Riyadh, TAGAHAYEEZ warehouses",
+      "hours_en": "Saturday – Thursday: 9 AM – 10 PM",
+      "quick_links_ar": ["الرئيسية", "كل الأقسام", "العروض", "العلامات التجارية", "الأسئلة الشائعة", "سياسة الاستبدال"],
+      "top_categories_ar": ["محضّرات القهوة", "مطاحن القهوة", "التبريد والتجميد", "الأفران والطهي التجاري", "معدات القلي", "الحلويات والمخبوزات"],
+      "newsletter_title_en": "Equipment offers, first",
+      "newsletter_desc_en": "Subscribe for new arrivals, seasonal offers and operating tips from our experts.",
+      "payment_methods": ["مدى", "Visa", "Mastercard", "Apple Pay", "تمارا"],
+      "copyright": "© 2025 TAGAHAYEEZ — All rights reserved",
+      "tax_info": "VAT number: 310123456700003 • CR 1010456789",
+      "is_active": true
+    }
+    $json$,
+    'json', TRUE, TRUE,
+    'Homepage footer: description, address, hours, links, newsletter, payments, copyright')
+ON CONFLICT (key) DO UPDATE
+SET value = EXCLUDED.value,
+    type = EXCLUDED.type,
+    is_public = EXCLUDED.is_public,
+    is_active = EXCLUDED.is_active,
+    description = EXCLUDED.description,
+    updated_at = now();
 -- ==========================================================================
 INSERT INTO cities (name, country_code, is_active, sort_order)
 VALUES

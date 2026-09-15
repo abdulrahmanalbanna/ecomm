@@ -62,14 +62,30 @@ if (-not (Test-Path $VerifyFile)) {
     exit 1
 }
 
-$sqlContent = Get-Content $VerifyFile -Raw
+# NOTE (UTF-8 safety): the SQL file is staged into the container with
+# `docker cp` and executed with `psql -f` so no Windows-shell STDIN pipe
+# can re-encode non-ASCII bytes (see run-schema.ps1 for details).
+$PgsqlContainerId = (docker compose ps -q $PgsqlService 2>&1 | Select-Object -First 1).ToString().Trim()
+if (-not $PgsqlContainerId) {
+    Write-Host "ERROR: Could not resolve container ID for service '$PgsqlService'." -ForegroundColor Red
+    exit 1
+}
+
+$containerPath = "/tmp/verify-schema.sql"
+docker cp "$VerifyFile" "${PgsqlContainerId}:$containerPath"
+if ($LASTEXITCODE -ne 0) {
+    Write-Host "ERROR: Failed to stage verification script into container." -ForegroundColor Red
+    exit 1
+}
+
 if ($envPass) {
-    $sqlContent | docker compose exec -T -e "PGPASSWORD=$envPass" $PgsqlService psql -U $Username -d $Database -v ON_ERROR_STOP=1
+    docker compose exec -T -e "PGPASSWORD=$envPass" -e "PGCLIENTENCODING=UTF8" $PgsqlService psql -U $Username -d $Database -v ON_ERROR_STOP=1 -f $containerPath
 } else {
-    $sqlContent | docker compose exec -T $PgsqlService psql -U $Username -d $Database -v ON_ERROR_STOP=1
+    docker compose exec -T -e "PGCLIENTENCODING=UTF8" $PgsqlService psql -U $Username -d $Database -v ON_ERROR_STOP=1 -f $containerPath
 }
 
 $exitCode = $LASTEXITCODE
+docker compose exec -T $PgsqlService rm -f $containerPath 2>&1 | Out-Null
 
 Write-Host ""
 if ($exitCode -eq 0) {

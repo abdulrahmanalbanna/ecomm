@@ -34,6 +34,7 @@ final class ModuleRegistry
      * Place modules with no inter-module dependencies first.
      */
     public const MODULES = [
+        'Settings',
         'Identity',
         'Customer',
         'Catalog',

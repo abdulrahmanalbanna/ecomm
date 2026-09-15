@@ -9,7 +9,6 @@ import {
   brands,
   byCategory,
   categories,
-  features,
   formatPrice,
   IMG,
   newArrivals,
@@ -17,8 +16,8 @@ import {
   productById,
   products,
   projects,
-  stats,
 } from "../catalog";
+import { useShopSettings } from "../use-settings";
 import { useCart } from "@/stores/cart";
 import { useCountUp, useInView, useRevealObserver } from "@/hooks/use-home";
 import { AddButton, ProductCard, PromoTile, Stars } from "@/features/home/components/ProductCard";
@@ -390,6 +389,9 @@ export function WhyUs() {
   const t = useTranslations("home.why");
   const locale = useLocale();
   const ref = useRevealObserver<HTMLElement>();
+  const { settings } = useShopSettings();
+  const stats = settings.stats;
+  const features = settings.features;
   return (
     <section id="why-us" ref={ref} className="relative scroll-mt-28 overflow-hidden bg-primary-900 py-16">
       <div className="pattern-dots absolute inset-0" aria-hidden />

@@ -18,8 +18,3 @@ Laravel API base URL: `NEXT_PUBLIC_API_URL=http://localhost:8000/api`.
 - `next-intl` is configured for `ar`, `en`, and `fr`; Arabic is RTL.
 - Laravel response envelope expected: `{ data, message, meta }`.
 - No Laravel secrets belong in `NEXT_PUBLIC_*` variables.
-
-cities
-brand
-banner
-wishlist

@@ -4,9 +4,11 @@ import Image from "next/image";
 
 import { useEffect, useRef, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
-import { categories, formatPrice, pickLocale, products, tickerItems } from "../catalog";
+import { categories, formatPrice, pickLocale, products } from "../catalog";
+import { useShopSettings } from "../use-settings";
 import { branding } from "@/config/branding";
 import { useCart } from "@/stores/cart";
+import { useMounted } from "@/hooks/use-home";
 import { IconCart, IconChevron, IconPhone, IconSearch, IconUser, IconWhatsApp } from "@/features/home/components/Icons";
 
 export function Logo({ light = false }: { light?: boolean }) {
@@ -38,9 +40,14 @@ export function Logo({ light = false }: { light?: boolean }) {
 
 function Ticker() {
   const locale = useLocale();
-  const items = [...tickerItems, ...tickerItems];
+  const { settings } = useShopSettings();
+  const items = [...settings.ticker_items, ...settings.ticker_items];
+  // `suppressHydrationWarning` guards against the live API returning ticker
+  // items in a different order/text than the static fallback used for the
+  // server prerender (external changing data). The `useEffect`-driven update
+  // in `useShopSettings` replaces them right after hydration.
   return (
-    <div className="overflow-hidden bg-primary-950 py-1.5" dir="ltr">
+    <div className="overflow-hidden bg-primary-950 py-1.5" dir="ltr" suppressHydrationWarning>
       <div className="anim-ticker flex w-max items-center gap-8">
         {items.map((item, i) => (
           <span key={i} dir="rtl" className="flex items-center gap-8 whitespace-nowrap text-[12px] font-bold text-secondary-300">
@@ -131,6 +138,10 @@ export function Header() {
   const { count, badgeKey, setDrawerOpen } = useCart();
   const [scrolled, setScrolled] = useState(false);
   const [activeCat, setActiveCat] = useState<string | null>(null);
+  // `count` is persisted in localStorage (client-only). Gate it behind mount
+  // so the first client render matches the server (count = 0) and avoids a
+  // hydration mismatch when the cart is non-empty.
+  const mounted = useMounted();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40);
@@ -207,11 +218,11 @@ export function Header() {
             <button
               onClick={() => setDrawerOpen(true)}
               className="relative flex h-10 items-center gap-2 rounded-xl border border-muted-200 bg-surface p-2 text-[13.5px] font-extrabold text-primary-950 transition-all duration-300 hover:border-secondary-500 hover:bg-surface active:scale-95"
-              aria-label={t("cartCount", { count })}
+              aria-label={mounted ? t("cartCount", { count }) : t("cartCount", { count: 0 })}
             >
               <IconCart size={25} />
               {/* <span className="hidden sm:inline">{t("cart.label")}</span> */}
-              {count > 0 && (
+              {mounted && count > 0 && (
                 <span
                   key={badgeKey}
                   className="anim-badge-pop absolute -left-1.5 -top-1.5 grid h-5 min-w-5 place-items-center rounded-full bg-primary-900 px-1 text-[10.5px] font-black text-secondary-300 tabular"
