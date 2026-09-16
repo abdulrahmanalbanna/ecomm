@@ -90,6 +90,22 @@ class SettingsService
      */
     public function toPublicPayload(array $flat): array
     {
+        return $this->toHomepagePayload($flat);
+    }
+
+    /**
+     * Normalize the public settings into the stable homepage contract.
+     *
+     * `loadFromDatabase()` enforces the row-level is_public/is_active flags
+     * and safely decodes each TEXT value. This method applies the second
+     * activation level to JSON objects/items without allowing malformed or
+     * missing settings to break the complete response.
+     *
+     * @param  array<string, mixed>  $flat
+     * @return array<string, mixed>
+     */
+    public function toHomepagePayload(array $flat): array
+    {
         $tickerRaw = $flat['ticker_items'] ?? [];
         $ticker = $this->flattenTicker($tickerRaw);
 
@@ -103,10 +119,10 @@ class SettingsService
                 'copyright_text' => $flat['store.copyright_text'] ?? null,
                 'currency'       => $flat['store.currency'] ?? 'SAR',
             ],
-            'header'                   => $flat['homepage.header'] ?? null,
-            'footer'                   => $flat['homepage.footer'] ?? null,
-            'features'                 => $flat['features'] ?? [],
-            'stats'                    => $flat['stats'] ?? [],
+            'header'                   => $this->activeObject($flat['homepage.header'] ?? null),
+            'footer'                   => $this->activeObject($flat['homepage.footer'] ?? null),
+            'features'                 => $this->activeItems($flat['features'] ?? []),
+            'stats'                    => $this->activeItems($flat['stats'] ?? []),
             'ticker_items'             => $ticker,
             'free_shipping_threshold'  => isset($flat['shipping.free_shipping_threshold'])
                 ? (float) $flat['shipping.free_shipping_threshold']
@@ -213,11 +229,61 @@ class SettingsService
                 $out[] = $item;
                 continue;
             }
-            if (is_array($item) && isset($item['text']) && ($item['is_active'] ?? true)) {
+            if (is_array($item) && isset($item['text']) && $this->isActive($item['is_active'] ?? true)) {
                 $out[] = (string) $item['text'];
             }
         }
 
         return array_values($out);
+    }
+
+    /**
+     * @return array<string, mixed>|null
+     */
+    private function activeObject(mixed $raw): ?array
+    {
+        if (! is_array($raw) || ! $this->isActive($raw['is_active'] ?? true)) {
+            return null;
+        }
+
+        unset($raw['is_active']);
+
+        return $raw;
+    }
+
+    /**
+     * @return array<int, array<string, mixed>>
+     */
+    private function activeItems(mixed $raw): array
+    {
+        if (! is_array($raw) || ! array_is_list($raw)) {
+            return [];
+        }
+
+        $items = [];
+        foreach ($raw as $item) {
+            if (! is_array($item) || ! $this->isActive($item['is_active'] ?? true)) {
+                continue;
+            }
+
+            unset($item['is_active']);
+            $items[] = $item;
+        }
+
+        return $items;
+    }
+
+    private function isActive(mixed $value): bool
+    {
+        if (is_bool($value)) {
+            return $value;
+        }
+
+        if (is_int($value)) {
+            return $value === 1;
+        }
+
+        return is_string($value)
+            && in_array(strtolower($value), ['1', 'true', 'yes', 'on'], true);
     }
 }

@@ -1,27 +1,26 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { getPublicSettings, type ShopSettings } from "@/features/home/api";
-import { FREE_SHIPPING_THRESHOLD, stats} from "@/features/home/catalog";
+import { getHomepage, type ShopSettings } from "@/features/home/api";
 
-/** Offline fallback built from the static `catalog.ts` data. */
+/** Empty shape used until Laravel responds; it contains no mock storefront data. */
 const fallbackSettings: ShopSettings = {
   store: {
-    name: "TAGAHAYEEZ",
+    name: "",
     phone: null,
     logo: null,
     footer_logo: null,
     fav_icon: null,
     copyright_text: null,
-    currency: "SAR",
+    currency: "",
   },
   header: null,
   footer: null,
   features:[],
-  stats: stats.map((s) => ({ value: s.value, suffix: s.suffix, label: s.label })),
+  stats: [],
   ticker_items: [],
-  free_shipping_threshold: FREE_SHIPPING_THRESHOLD,
-  currency: "SAR",
+  free_shipping_threshold: 0,
+  currency: "",
   maintenance_mode: false,
 };
 
@@ -31,9 +30,9 @@ let inflight: Promise<ShopSettings> | null = null;
 async function loadSettings(): Promise<ShopSettings> {
   if (cached) return cached;
   if (!inflight) {
-    inflight = getPublicSettings()
+    inflight = getHomepage()
       .then((settings) => {
-        console.log("settings", settings);
+        console.log("HomePage", settings);
 
         cached = settings;
         return cached;
@@ -47,9 +46,9 @@ async function loadSettings(): Promise<ShopSettings> {
 }
 
 /**
- * Live storefront settings from `GET {NEXT_PUBLIC_API_URL}/v1/settings`.
- * Returns the static `catalog.ts` fallback until the API responds (or when
- * the API is unreachable), so the storefront always renders.
+ * Live storefront settings from `GET {NEXT_PUBLIC_API_URL}/v1/homepage`.
+ * Returns an empty settings shape until the API responds (or when the API is
+ * unreachable), so rendered business content never claims to be live data.
  *
  * IMPORTANT: the initial state is ALWAYS `fallbackSettings` (never the
  * module-level `cached` value) so the first client render is identical to

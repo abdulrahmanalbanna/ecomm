@@ -25,4 +25,23 @@ return Application::configure(basePath: dirname(__DIR__))
         $exceptions->shouldRenderJsonWhen(
             static fn (Request $request): bool => $request->is('api/*') || $request->expectsJson()
         );
+
+        // HandleCors may not decorate an exception rendered after the
+        // middleware stack. Preserve the configured allowlist so the
+        // storefront can read the real JSON error instead of reporting only
+        // a misleading browser CORS failure.
+        $exceptions->respond(function ($response) {
+            $request = request();
+            $origin = $request->headers->get('Origin');
+            $allowedOrigins = config('cors.allowed_origins', []);
+
+            if ($request->is('api/*') && $origin && in_array($origin, $allowedOrigins, true)) {
+                $response->headers->set('Access-Control-Allow-Origin', $origin);
+                $response->headers->set('Vary', 'Origin');
+                $response->headers->set('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS');
+                $response->headers->set('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With, X-CSRF-TOKEN');
+            }
+
+            return $response;
+        });
     })->create();

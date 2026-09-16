@@ -12,6 +12,13 @@ export const getPublicSettings = (): Promise<ShopSettings> =>
   apiClient.get<ShopSettings>("/v1/settings").then(extractData);
 
 /**
+ * Normalized public homepage payload served by Laravel.
+ * `GET {NEXT_PUBLIC_API_URL}/v1/homepage` (no auth required).
+ */
+export const getHomepage = (): Promise<ShopSettings> =>
+  apiClient.get<ShopSettings>("/v1/homepage").then(extractData);
+
+/**
  * Public categories served by Laravel
  * `GET {NEXT_PUBLIC_API_URL}/v1/catalog/categories` (no auth required).
  *

@@ -24,10 +24,8 @@ class ProductPublicController
             'search',
             'sort',
         ]);
-
-        $perPage = (int) $request->input('per_page', 15);
+        $perPage = min(100, max(1, (int) $request->input('per_page', 15)));
         $products = $this->productService->getPublicProducts($filters, $perPage);
-
         return response()->json([
             'data' => ProductPublicResource::collection($products->items()),
             'meta' => [

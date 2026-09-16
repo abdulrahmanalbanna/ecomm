@@ -6,6 +6,7 @@ namespace App\Modules\Settings\Infrastructure\Persistence\Models;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Cache;
 
 /**
  * BusinessSetting
@@ -39,6 +40,14 @@ class BusinessSetting extends Model
         // valid JSON) and coerces 'false'/'15.00' to bool/float, which then
         // crashes SettingsService::cast(?string ...) with a 500.
     ];
+
+    protected static function booted(): void
+    {
+        $flush = static fn (): bool => Cache::forget('settings.public.v1');
+
+        static::saved($flush);
+        static::deleted($flush);
+    }
 
     public function scopePublic(Builder $query): Builder
     {

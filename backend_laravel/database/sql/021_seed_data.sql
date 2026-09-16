@@ -294,8 +294,8 @@ VALUES
       "newsletter_title_en": "Equipment offers, first",
       "newsletter_desc_en": "Subscribe for new arrivals, seasonal offers and operating tips from our experts.",
       "payment_methods": ["مدى", "Visa", "Mastercard", "Apple Pay", "تمارا"],
-      "copyright": "© 2025 TAGAHAYEEZ — All rights reserved",
-      "tax_info": "VAT number: 310123456700003 • CR 1010456789",
+      "copyright": "© 2026 TAGAHAYEEZ — All rights reserved",
+      "tax_info": "VAT number: 415103556777783• CR 1010456789",
       "is_active": true
     }
     $json$,

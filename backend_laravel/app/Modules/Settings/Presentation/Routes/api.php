@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/settings', [SettingsPublicController::class, 'index'])->name('settings.index');
+Route::get('/homepage', [SettingsPublicController::class, 'homepage'])->name('homepage.index');
 Route::get('/settings/{key}', [SettingsPublicController::class, 'show'])
     ->where('key', '[A-Za-z0-9_.]+')
     ->name('settings.show');

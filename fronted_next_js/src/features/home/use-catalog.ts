@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { getCategories, getProducts } from "@/features/home/api";
 import { adaptCategory, adaptProduct } from "@/features/home/api";
-import type { LaravelCategory, LaravelProduct } from "@/lib/api/client";
+
 import {
   categories as staticCategories,
   products as staticProducts,
