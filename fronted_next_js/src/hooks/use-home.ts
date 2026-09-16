@@ -19,21 +19,43 @@ export function useRevealObserver<T extends HTMLElement>() {
   useEffect(() => {
     const root = ref.current;
     if (!root) return;
-    const els = root.querySelectorAll(".reveal");
-    if (!els.length) return;
+
     const io = new IntersectionObserver(
       (entries) => {
-        entries.forEach((e) => {
-          if (e.isIntersecting) {
-            e.target.classList.add("in");
-            io.unobserve(e.target);
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("in");
+            io.unobserve(entry.target);
           }
         });
       },
       { threshold: 0.12, rootMargin: "0px 0px -6% 0px" }
     );
-    els.forEach((el) => io.observe(el));
-    return () => io.disconnect();
+
+    const observeRevealElements = (container: ParentNode) => {
+      container.querySelectorAll(".reveal:not(.in)").forEach((element) => io.observe(element));
+    };
+
+    // Observe the initial elements and any elements inserted after an API
+    // response replaces the fallback content.
+    observeRevealElements(root);
+    const mutationObserver = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        mutation.addedNodes.forEach((node) => {
+          if (node.nodeType === Node.ELEMENT_NODE) {
+            const element = node as Element;
+            if (element.matches(".reveal:not(.in)")) io.observe(element);
+            observeRevealElements(element);
+          }
+        });
+      });
+    });
+    mutationObserver.observe(root, { childList: true, subtree: true });
+
+    return () => {
+      mutationObserver.disconnect();
+      io.disconnect();
+    };
   }, []);
   return ref;
 }

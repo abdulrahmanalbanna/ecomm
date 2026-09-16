@@ -3,7 +3,7 @@
 import Image from "next/image";
 
 import { useEffect, useRef, useState } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { categories as staticCategories, formatPrice, type Category, type Product } from "../catalog";
 import { useShopSettings } from "../use-settings";
 import { useCart, resolveProduct } from "@/stores/cart";
@@ -433,21 +433,57 @@ export function MobileNav() {
 }
 
 /* ================= footer ================= */
+type FooterApiContent = {
+  description_ar?: string;
+  description_en?: string;
+  address_ar?: string;
+  address_en?: string;
+  hours_ar?: string;
+  hours_en?: string;
+  quick_links_ar?: string[];
+  quick_links_en?: string[];
+  top_categories_ar?: string[];
+  top_categories_en?: string[];
+  newsletter_title_ar?: string;
+  newsletter_title_en?: string;
+  newsletter_desc_ar?: string;
+  newsletter_desc_en?: string;
+  payment_methods?: string[];
+  copyright?: string;
+  tax_info?: string;
+};
+
 export function Footer({ categories }: { categories?: Category[] }) {
   const t = useTranslations("home.footer");
+  const locale = useLocale();
+  const { settings } = useShopSettings();
   const [email, setEmail] = useState("");
   const [subscribed, setSubscribed] = useState(false);
 
-  const displayCategories = (categories && categories.length > 0) ? categories : staticCategories;
+  const footer = (settings.footer ?? {}) as FooterApiContent;
+  const isArabic = locale === "ar";
+  const displayCategories = categories && categories.length > 0 ? categories : staticCategories;
+  const apiQuickLinks = isArabic ? footer.quick_links_ar : footer.quick_links_en;
+  const apiTopCategories = isArabic ? footer.top_categories_ar : footer.top_categories_en;
+  const quickLinks = apiQuickLinks?.length ? apiQuickLinks : [t("home"), t("allCategories"), t("offers"), t("brands"), t("faq"), t("returns")];
+  const topCategories = apiTopCategories?.length
+    ? apiTopCategories.slice(0, 6)
+    : displayCategories.slice(0, 6).map((c: Category) => c.name);
+  const description = (isArabic ? footer.description_ar : footer.description_en) ?? t("description");
+  const address = (isArabic ? footer.address_ar : footer.address_en) ?? t("address");
+  const hours = (isArabic ? footer.hours_ar : footer.hours_en) ?? t("hours");
+  const newsletterTitle = (isArabic ? footer.newsletter_title_ar : footer.newsletter_title_en) ?? t("newsletterTitle");
+  const newsletterDesc = (isArabic ? footer.newsletter_desc_ar : footer.newsletter_desc_en) ?? t("newsletterDesc");
+  const paymentMethods = footer.payment_methods?.length ? footer.payment_methods : ["مدى", "Visa", "Mastercard", "Apple Pay", "تمارا"];
 
   const cols = [
     {
       title: t("quickLinks"),
-      links: [t("home"), t("allCategories"), t("offers"), t("brands"), t("faq"), t("returns")],
+      links: quickLinks,
     },
     {
       title: t("topCategories"),
-      links: displayCategories.slice(0, 6).map((c: Category) => c.name),
+      links: topCategories,
       ids: displayCategories.slice(0, 6).map((c: Category) => `rail-${c.id}`),
     },
   ];
@@ -460,16 +496,16 @@ export function Footer({ categories }: { categories?: Category[] }) {
           <div>
             <Logo light />
             <p className="mt-4 max-w-xs text-[13px] font-medium leading-7 text-primary-100/70">
-              {t("description")}
+              {description}
             </p>
             <div className="mt-5 space-y-2.5 text-[12.5px] font-bold">
               <p className="flex items-center gap-2.5">
                 <IconPin size={16} className="text-secondary-400" />
-                {t("address")}
+                {address}
               </p>
               <p className="flex items-center gap-2.5">
                 <IconClock size={16} className="text-secondary-400" />
-                {t("hours")}
+                {hours}
               </p>
             </div>
           </div>
@@ -499,9 +535,9 @@ export function Footer({ categories }: { categories?: Category[] }) {
 
           {/* newsletter */}
           <div>
-            <h4 className="mb-4 font-display text-[15px] font-extrabold text-background">{t("newsletterTitle")}</h4>
+            <h4 className="mb-4 font-display text-[15px] font-extrabold text-background">{newsletterTitle}</h4>
             <p className="text-[12.5px] font-medium leading-6 text-primary-100/65">
-              {t("newsletterDesc")}
+              {newsletterDesc}
             </p>
             {subscribed ? (
               <p className="mt-4 flex items-center gap-2 rounded-xl bg-primary-800/80 px-4 py-3 text-[13px] font-extrabold text-success">
@@ -530,7 +566,7 @@ export function Footer({ categories }: { categories?: Category[] }) {
               </form>
             )}
             <div className="mt-5 flex gap-2 text-[11px] font-extrabold text-primary-100/60">
-              {["مدى", "Visa", "Mastercard", "Apple Pay", "تمارا"].map((p) => (
+              {paymentMethods.map((p) => (
                 <span key={p} className="rounded-md border border-primary-700 bg-primary-900 px-2.5 py-1.5">{p}</span>
               ))}
             </div>
@@ -538,8 +574,8 @@ export function Footer({ categories }: { categories?: Category[] }) {
         </div>
 
         <div className="mt-12 flex flex-wrap items-center justify-between gap-3 border-t border-primary-800 pt-6 text-[12px] font-bold text-primary-100/50">
-          <p>{t("copyright")}</p>
-          <p className="tabular">{t("tax")}</p>
+          <p>{footer.copyright ?? t("copyright")}</p>
+          <p className="tabular">{footer.tax_info ?? t("tax")}</p>
         </div>
       </div>
     </footer>

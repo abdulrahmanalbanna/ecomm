@@ -158,10 +158,10 @@ export const brands = [
   { ar: "كوميتا", en: "COMETA", since: "إيطاليا", sinceEn: "Italy" },
 ];
 
-export const features = [
-  { id: "f1", title: "استيراد مباشر", desc: "نستورد من المصانع الأم مباشرة، فكل قطعة أصلية وبسعر بلا وسطاء.", icon: "cargo" },
-  { id: "f2", title: "وكلاء معتمدون", desc: "وكالة رسمية لعلامات عالمية مع شهادات اعتماد وضمان مصنعي.", icon: "shield" },
-];
+// export const features = [
+//   { id: "f1", title: "استيراد مباشر", desc: "نستورد من المصانع الأم مباشرة، فكل قطعة أصلية وبسعر بلا وسطاء.", icon: "cargo" },
+//   { id: "f2", title: "وكلاء معتمدون", desc: "وكالة رسمية لعلامات عالمية مع شهادات اعتماد وضمان مصنعي.", icon: "shield" },
+// ];
 
 export const stats = [
   { value: 30, suffix: "+", label: "مدينة نغطيها بالشحن" },
