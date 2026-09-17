@@ -119,26 +119,26 @@ const SLUG_TO_FRONTEND_ID: Record<string, string> = {
 };
 
 /** Static image fallback per frontend category id. */
-const CATEGORY_IMAGE: Record<string, string> = {
-  coffee: "/images/espresso.png",
-  grinders: "/images/grinder.png",
-  cooling: "/images/icemaker.png",
-  cooking: "/images/oven.png",
-  frying: "/images/fryer.png",
-  bakery: "/images/mixer.png",
-  drinks: "/images/juice.png",
-};
+// const CATEGORY_IMAGE: Record<string, string> = {
+//   coffee: "/images/espresso.png",
+//   grinders: "/images/grinder.png",
+//   cooling: "/images/icemaker.png",
+//   cooking: "/images/oven.png",
+//   frying: "/images/fryer.png",
+//   bakery: "/images/mixer.png",
+//   drinks: "/images/juice.png",
+// };
 
 /** Static tint fallback per frontend category id. */
-const CATEGORY_TINT: Record<string, string> = {
-  coffee: "#FF6A00",
-  grinders: "#062B6F",
-  cooling: "#0B4EA2",
-  cooking: "#D65600",
-  frying: "#B44A00",
-  bakery: "#1459B8",
-  drinks: "#FF862E",
-};
+// const CATEGORY_TINT: Record<string, string> = {
+//   coffee: "#FF6A00",
+//   grinders: "#062B6F",
+//   cooling: "#0B4EA2",
+//   cooking: "#D65600",
+//   frying: "#B44A00",
+//   bakery: "#1459B8",
+//   drinks: "#FF862E",
+// };
 
 /**
  * Convert a Laravel CategoryResource into the frontend Category type.
@@ -151,8 +151,8 @@ export function adaptCategory(raw: LaravelCategory): Category {
     id: frontendId,
     name: raw.name,
     desc: raw.description ?? "",
-    image: raw.image_url ?? CATEGORY_IMAGE[frontendId] ?? "/images/hero.png",
-    tint: CATEGORY_TINT[frontendId] ?? "#0B4EA2",
+    image: raw.image_url ?? "/images/hero.png",
+    tint: "#0B4EA2",// this temp
   };
 }
 
@@ -193,7 +193,7 @@ export function adaptProduct(raw: LaravelProduct): Product {
     spec: raw.short_description ?? raw.description ?? "",
     price,
     oldPrice,
-    image: mediaUrl ?? CATEGORY_IMAGE[frontendCategory] ?? "/images/hero.png",
+    image: mediaUrl?? "/images/hero.png",
     category: frontendCategory,
     freeShipping: undefined,
     startsFrom: undefined,

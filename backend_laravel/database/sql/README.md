@@ -135,6 +135,8 @@ To override (e.g., force re-apply to an already-populated database):
 ```bash
 bash database/sql/run-schema.sh -f
 ```
+### this for run specific file
+Get-Content -Raw .\database\sql\file_name.sql | docker compose exec -T pgsql psql -U sail -d ecommerce -v ON_ERROR_STOP=1
 
 ### Fresh Rebuild (Development Only — Manual)
 
@@ -174,7 +176,7 @@ The verification script:
 - Exits with code `0` on full pass, `3` on any required failure.
 
 Verifications include: extensions, enum types, core tables, partitioned tables,
-child partitions, functions, triggers, materialized views, RLS absence,
+child partitions, functions, triggers, materialized views,
 key indexes, and seed data.
 
 ---

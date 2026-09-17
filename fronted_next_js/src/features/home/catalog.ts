@@ -163,12 +163,12 @@ export const brands = [
 //   { id: "f2", title: "وكلاء معتمدون", desc: "وكالة رسمية لعلامات عالمية مع شهادات اعتماد وضمان مصنعي.", icon: "shield" },
 // ];
 
-export const stats = [
-  { value: 30, suffix: "+", label: "مدينة نغطيها بالشحن" },
-  { value: 120, suffix: "+", label: "مشروع جُهّز معنا" },
-  { value: 15, suffix: "+", label: "سنة في السوق السعودي" },
-  { value: 98, suffix: "%", label: "رضا عملائنا" },
-];
+// export const stats = [
+//   { value: 30, suffix: "+", label: "مدينة نغطيها بالشحن" },
+//   { value: 120, suffix: "+", label: "مشروع جُهّز معنا" },
+//   { value: 15, suffix: "+", label: "سنة في السوق السعودي" },
+//   { value: 98, suffix: "%", label: "رضا عملائنا" },
+// ];
 
 
 

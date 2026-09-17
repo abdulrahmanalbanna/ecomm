@@ -120,7 +120,8 @@ $SqlFiles = @(
     "017_indexes.sql",
     "018_functions_triggers.sql",
     "019_materialized_views.sql",
-    "021_seed_data.sql"
+    "021_seed_data.sql",
+    "022_catalog_seed.sql"
 )
 
 # --- Step 5: Apply SQL files ---------------------------------------------------

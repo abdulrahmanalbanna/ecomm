@@ -113,6 +113,7 @@ SQL_FILES=(
     "018_functions_triggers.sql"
     "019_materialized_views.sql"
     "021_seed_data.sql"
+    "022_catalog_seed.sql"
 )
 
 echo "[5/6] Applying schema files (${#SQL_FILES[@]} files)..."

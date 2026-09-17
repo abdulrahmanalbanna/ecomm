@@ -11,7 +11,7 @@ const nextConfig: NextConfig = {
     // Primary images are local in public/images (see src/features/home/catalog.ts).
     // Remote patterns for Laravel media URLs (storage/app/public/*) and qwenlm.ai.
     remotePatterns: [
-      { protocol: "https", hostname: "image.qwenlm.ai", pathname: "/generated-images/**" },
+      // { protocol: "https", hostname: "image.qwenlm.ai", pathname: "/generated-images/**" },
       { protocol: "http", hostname: "localhost", pathname: "/storage/**" },
       { protocol: "https", hostname: "localhost", pathname: "/storage/**" },
       { protocol: "http", hostname: "127.0.0.1", pathname: "/storage/**" },
