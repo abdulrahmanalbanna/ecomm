@@ -47,12 +47,12 @@ export function Toasts() {
 }
 
 /* ================= cart drawer ================= */
-export function CartDrawer({ byId }: { byId: Map<string, Product> }) {
+export function CartDrawer({ byId, settings: initialSettings }: { byId: Map<string, Product>; settings?: ReturnType<typeof useShopSettings>["settings"] | null }) {
   const t = useTranslations("home.cart");
   const { lines, drawerOpen, setDrawerOpen, inc, dec, remove, clear, subtotal, count } = useCart();
   const [placed, setPlaced] = useState(false);
   const [orderNo, setOrderNo] = useState<string | null>(null);
-  const { settings } = useShopSettings();
+  const { settings } = useShopSettings(initialSettings);
   const FREE_SHIPPING_THRESHOLD = settings.free_shipping_threshold;
   const vat = Math.round(subtotal * 0.15);
   const remaining = Math.max(0, FREE_SHIPPING_THRESHOLD - subtotal);
@@ -453,10 +453,10 @@ type FooterApiContent = {
   tax_info?: string;
 };
 
-export function Footer({ categories }: { categories?: Category[] }) {
+export function Footer({ categories, settings: initialSettings }: { categories?: Category[]; settings?: ReturnType<typeof useShopSettings>["settings"] | null }) {
   const t = useTranslations("home.footer");
   const locale = useLocale();
-  const { settings } = useShopSettings();
+  const { settings } = useShopSettings(initialSettings);
   const [email, setEmail] = useState("");
   const [subscribed, setSubscribed] = useState(false);
 

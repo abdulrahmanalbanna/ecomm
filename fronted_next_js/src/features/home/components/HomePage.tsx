@@ -1,32 +1,40 @@
-"use client";
-
-import { useEffect } from "react";
+import type { ShopSettings } from "../api";
+import type { Category, Product } from "../catalog";
 import { Header } from "./Header";
 import { Hero } from "./Hero";
 import { BrandsMarquee, CategoryTiles, CtaBand, ProductRail, ProjectsGrid, TabsSection, WhyUs } from "./HomeSections";
 import { CartDrawer, ChatWidget, Footer, MobileNav, Toasts } from "./Chrome";
-import { useCatalog } from "@/features/home/use-catalog";
-import { setCartProductLookup } from "@/stores/cart";
+import { CartProductLookupSync } from "./CartProductLookupSync";
 
-export function HomePage() {
-  const catalog = useCatalog();
-  const { categories, byCategory, byId } = catalog;
+export type HomePageProps = {
+  settings?: ShopSettings | null;
+  categories?: Category[];
+  products?: Product[];
+  byId?: Map<string, Product>;
+  byCategory?: Map<string, Product[]>;
+};
 
-  // Keep the cart store's product lookup in sync with the live catalog
-  // snapshot. The cart store uses this to resolve cart-line ids (now
-  // Laravel `public_id` UUIDs) to display names and prices; it falls
-  // back to the static catalog for unknown / pre-migration ids.
-  useEffect(() => {
-    setCartProductLookup(byId);
-    return () => {
-      // Don't clear on unmount during a normal page nav — leaving the
-      // lookup installed keeps the cart store consistent across pages.
-    };
-  }, [byId]);
+export function HomePage({
+  settings = null,
+  categories = [],
+  products = [],
+  byId = new Map(),
+  byCategory = new Map(),
+}: HomePageProps) {
+  const catalogState = {
+    categories,
+    products,
+    byId,
+    byCategory,
+    live: categories.length > 0 || products.length > 0,
+    loading: false,
+    error: null,
+  };
 
   return (
     <div className="grain min-h-screen">
-      <Header catalog={catalog} />
+      <CartProductLookupSync byId={byId} />
+      <Header catalog={catalogState} settings={settings} />
       <main>
         <Hero categories={categories} />
         <CategoryTiles categories={categories} />
@@ -40,11 +48,11 @@ export function HomePage() {
         <ProjectsGrid />
         <TabsSection byId={byId} />
         <BrandsMarquee />
-        <WhyUs />
+        <WhyUs settings={settings} />
         <CtaBand />
       </main>
-      <Footer categories={categories} />
-      <CartDrawer byId={byId} />
+      <Footer categories={categories} settings={settings} />
+      <CartDrawer byId={byId} settings={settings} />
       <ChatWidget />
       <MobileNav />
       <Toasts />

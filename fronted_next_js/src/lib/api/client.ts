@@ -15,7 +15,7 @@ export const getApiBaseUrl = () => (rawBaseUrl ?? "").replace(/\/+$/, "");
 const baseUrl = getApiBaseUrl();
 
 async function request<T>(path:string,init:RequestInit={}):Promise<LaravelResponse<T>>{
- const response=await fetch(`${baseUrl ?? ""}${path}`,{...init,headers:{Accept:"application/json","Content-Type":"application/json",...(init.headers??{})},cache:"no-store"});
+ const response=await fetch(`${baseUrl ?? ""}${path}`,{cache: init.cache ?? "no-store", ...init,headers:{Accept:"application/json","Content-Type":"application/json",...(init.headers??{})}});
  const payload=await response.json().catch(()=>null) as LaravelResponse<T>&{errors?:LaravelValidationErrors};
  if(!response.ok) throw new ApiError(response.status,payload?.errors,payload?.message);
  return payload;

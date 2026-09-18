@@ -57,15 +57,19 @@ async function loadSettings(): Promise<ShopSettings> {
  * live load would hydrate with different ticker/feature data than the
  * server HTML and throw a React hydration-mismatch error.
  */
-export function useShopSettings(): { settings: ShopSettings; live: boolean } {
-  const [settings, setSettings] = useState<ShopSettings>(fallbackSettings);
-  const [live, setLive] = useState(false);
+export function setCachedSettings(settings: ShopSettings) {
+  cached = settings;
+}
+
+export function useShopSettings(initialSettings?: ShopSettings | null): { settings: ShopSettings; live: boolean } {
+  if (initialSettings) {
+    cached = initialSettings;
+  }
+  const [settings, setSettings] = useState<ShopSettings>(initialSettings ?? cached ?? fallbackSettings);
+  const [live, setLive] = useState((initialSettings ?? cached) !== null && (initialSettings ?? cached) !== fallbackSettings);
 
   useEffect(() => {
     let cancelled = false;
-    // NOTE: `loadSettings()` resolves the module-level `cached` value (if
-    // any) asynchronously, so the live settings are only applied after
-    // hydration — never during the first client render.
     loadSettings().then((s) => {
       if (cancelled) return;
       setSettings(s);

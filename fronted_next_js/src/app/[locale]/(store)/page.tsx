@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { HomePage } from "@/features/home/components/HomePage";
+import { getHomeServerData } from "@/features/home/api";
 import type { Locale } from "@/types/locale";
 import { branding } from "@/config/branding";
 
@@ -25,5 +26,16 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: L
 export default async function Page({ params }: { params: Promise<{ locale: Locale }> }) {
   const { locale } = await params;
   setRequestLocale(locale);
-  return <HomePage />;
+
+  const { settings, categories, products, byId, byCategory } = await getHomeServerData();
+
+  return (
+    <HomePage
+      settings={settings}
+      categories={categories}
+      products={products}
+      byId={byId}
+      byCategory={byCategory}
+    />
+  );
 }

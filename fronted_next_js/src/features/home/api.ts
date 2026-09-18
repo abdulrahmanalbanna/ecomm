@@ -63,11 +63,13 @@ export const getProducts = (params?: {
   if (params?.page) searchParams.set("page", String(params.page));
   const query = searchParams.toString() ? `?${searchParams.toString()}` : "";
   return apiClient.get(`/v1/catalog/products${query}`).then((res) => {
-    // Laravel envelope: { data: { data: [...], meta: {...} }, meta?:... }
-    const payload = (res as any).data?.data ?? res.data ?? res;
-    const meta = (res as any).data?.meta ?? (res as any).meta ?? {};
+    const rawData = res.data as unknown as
+      | { data?: LaravelProduct[]; meta?: { current_page?: number; last_page?: number; per_page?: number; total?: number } }
+      | LaravelProduct[];
+    const items = Array.isArray(rawData) ? rawData : (rawData?.data ?? []);
+    const meta = !Array.isArray(rawData) && rawData?.meta ? rawData.meta : {};
     return {
-      products: payload as LaravelProduct[],
+      products: items,
       meta: {
         current_page: meta.current_page ?? 1,
         last_page: meta.last_page ?? 1,
@@ -180,6 +182,42 @@ export function adaptProduct(raw: LaravelProduct): Product {
     rating: 0,
     reviews: 0,
   };
+}
+
+export async function getHomeServerData(): Promise<{
+  settings: ShopSettings | null;
+  categories: Category[];
+  products: Product[];
+  byId: Map<string, Product>;
+  byCategory: Map<string, Product[]>;
+}> {
+  try {
+    const [settingsRes, categoriesRes, productsRes] = await Promise.allSettled([
+      getHomepage(),
+      getCategories(),
+      getProducts({ per_page: 100, page: 1 }),
+    ]);
+
+    const settings = settingsRes.status === "fulfilled" ? settingsRes.value : null;
+    const rawCategories = categoriesRes.status === "fulfilled" ? categoriesRes.value : [];
+    const rawProducts = productsRes.status === "fulfilled" ? productsRes.value.products : [];
+
+    const categories = rawCategories.length > 0 ? rawCategories.map(adaptCategory) : [];
+    const products = rawProducts.length > 0 ? rawProducts.map(adaptProduct) : [];
+
+    const byId = new Map<string, Product>();
+    const byCategory = new Map<string, Product[]>();
+    for (const p of products) {
+      byId.set(p.id, p);
+      const list = byCategory.get(p.category);
+      if (list) list.push(p);
+      else byCategory.set(p.category, [p]);
+    }
+
+    return { settings, categories, products, byId, byCategory };
+  } catch {
+    return { settings: null, categories: [], products: [], byId: new Map(), byCategory: new Map() };
+  }
 }
 
 export type { LaravelCategory, LaravelProduct };

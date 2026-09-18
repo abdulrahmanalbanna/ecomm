@@ -398,10 +398,10 @@ function StatBlock({ value, suffix, label, delay }: { value: number; suffix: str
   );
 }
 
-export function WhyUs() {
+export function WhyUs({ settings: initialSettings }: { settings?: ReturnType<typeof useShopSettings>["settings"] | null } = {}) {
   const t = useTranslations("home.why");
   const ref = useRevealObserver<HTMLElement>();
-  const { settings } = useShopSettings();
+  const { settings } = useShopSettings(initialSettings);
   const stats = settings.stats ?? [];
   const features = settings.features ?? [];
   return (

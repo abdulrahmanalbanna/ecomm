@@ -31,9 +31,9 @@ export function Logo({ light = false }: { light?: boolean }) {
   );
 }
 
-function Ticker() {
+function Ticker({ settings: initialSettings }: { settings?: ReturnType<typeof useShopSettings>["settings"] | null }) {
   const locale = useLocale();
-  const { settings } = useShopSettings();
+  const { settings } = useShopSettings(initialSettings);
   const tickerItems = settings.ticker_items ?? [];
   if (tickerItems.length === 0) return null;
   const items = [...tickerItems, ...tickerItems];
@@ -151,7 +151,7 @@ function SearchBox({
   );
 }
 
-export function Header({ catalog }: { catalog: CatalogState }) {
+export function Header({ catalog, settings }: { catalog: CatalogState; settings?: ReturnType<typeof useShopSettings>["settings"] | null }) {
   const t = useTranslations("home");
   const { count, badgeKey, setDrawerOpen } = useCart();
   const [scrolled, setScrolled] = useState(false);
@@ -173,7 +173,7 @@ export function Header({ catalog }: { catalog: CatalogState }) {
 
   return (
     <header className="sticky top-0 z-40">
-      <Ticker />
+      <Ticker settings={settings} />
 
       <div
         className={`border-b border-muted-200/70 bg-background/95 backdrop-blur transition-shadow duration-300 ${

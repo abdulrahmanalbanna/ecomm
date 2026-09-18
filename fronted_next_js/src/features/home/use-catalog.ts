@@ -91,12 +91,20 @@ async function loadOnce(): Promise<void> {
   return inflight;
 }
 
+export function setCatalogSnapshot(initial: { categories: Category[]; products: Product[] }) {
+  if (initial.categories.length > 0 || initial.products.length > 0) {
+    snapshot = initial;
+  }
+}
+
 export function getCatalogSnapshot() {
   return snapshot;
 }
 
-export function useCatalog(): CatalogState {
-  // Initial state mirrors the static fallback (used by SSR + first paint).
+export function useCatalog(initial?: { categories: Category[]; products: Product[] }): CatalogState {
+  if (initial && (initial.categories.length > 0 || initial.products.length > 0)) {
+    snapshot = initial;
+  }
   const [, force] = useState(0);
   const mountedRef = useRef(false);
 
@@ -104,7 +112,6 @@ export function useCatalog(): CatalogState {
     mountedRef.current = true;
     const cb = () => force((n) => n + 1);
     subscribers.add(cb);
-    // Kick off a single shared load if we don't have a snapshot yet.
     if (!snapshot && !inflight) {
       void loadOnce();
     }
