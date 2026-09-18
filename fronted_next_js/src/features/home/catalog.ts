@@ -10,7 +10,13 @@
  * - Categories / products → `GET {NEXT_PUBLIC_API_URL}/v1/catalog/...`
  *   (see `./api`). The static `categories`/`products` below remain as
  *   fallback until that migration lands.
+ *
+ * Images: the backend (Laravel `storage/app/public/catalog`, served as
+ * `{APP_URL}/storage/catalog/*.png`) is the single source of truth.
+ * `IMG` below points at the backend — the frontend no longer ships
+ * `public/images/*`.
  */
+import { getBackendStorageBase } from "@/lib/media";
 export type Category = {
   id: string;
   name: string;
@@ -40,17 +46,19 @@ export type Product = {
 
 export const FREE_SHIPPING_THRESHOLD = 1500;
 
+const CATALOG_IMG_BASE = getBackendStorageBase();
+
 export const IMG = {
-  hero: "/images/hero.png",
-  espresso: "/images/espresso.png",
-  grinder: "/images/grinder.png",
-  icemaker: "/images/icemaker.png",
-  showcase: "/images/showcase.png",
-  fryer: "/images/fryer.png",
-  oven: "/images/oven.png",
-  juice: "/images/juice.png",
-  mixer: "/images/mixer.png",
-  banner: "/images/banner.png",
+  hero: `${CATALOG_IMG_BASE}/hero.png`,
+  espresso: `${CATALOG_IMG_BASE}/espresso.png`,
+  grinder: `${CATALOG_IMG_BASE}/grinder.png`,
+  icemaker: `${CATALOG_IMG_BASE}/icemaker.png`,
+  showcase: `${CATALOG_IMG_BASE}/showcase.png`,
+  fryer: `${CATALOG_IMG_BASE}/fryer.png`,
+  oven: `${CATALOG_IMG_BASE}/oven.png`,
+  juice: `${CATALOG_IMG_BASE}/juice.png`,
+  mixer: `${CATALOG_IMG_BASE}/mixer.png`,
+  banner: `${CATALOG_IMG_BASE}/banner.png`,
 };
 
 export const categories: Category[] = [

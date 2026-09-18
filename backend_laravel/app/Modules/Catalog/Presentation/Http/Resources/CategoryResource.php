@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\Catalog\Presentation\Http\Resources;
 
+use App\Modules\Catalog\Support\CatalogMedia;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -17,7 +18,7 @@ class CategoryResource extends JsonResource
             'slug'        => $this->slug,
             'name'        => $this->name,
             'description' => $this->description,
-            'image_url'   => $this->image_url,
+            'image_url'   => CatalogMedia::url($this->image_url),
             'is_active'   => $this->is_active,
             'sort_order'  => $this->sort_order,
             'path'        => (string) $this->path,

@@ -1,4 +1,5 @@
 import {apiClient, extractData, type LaravelCategory, type LaravelProduct} from "@/lib/api/client";
+import {resolveMediaUrl} from "@/lib/media";
 import type {Category, Product} from "./catalog";
 
 /**
@@ -118,15 +119,15 @@ const SLUG_TO_FRONTEND_ID: Record<string, string> = {
   drinks: "drinks",
 };
 
-/** Static image fallback per frontend category id. */
+/** Static image fallback per frontend category id (backend catalog). */
 // const CATEGORY_IMAGE: Record<string, string> = {
-//   coffee: "/images/espresso.png",
-//   grinders: "/images/grinder.png",
-//   cooling: "/images/icemaker.png",
-//   cooking: "/images/oven.png",
-//   frying: "/images/fryer.png",
-//   bakery: "/images/mixer.png",
-//   drinks: "/images/juice.png",
+//   coffee: resolveMediaUrl("espresso.png"),
+//   grinders: resolveMediaUrl("grinder.png"),
+//   cooling: resolveMediaUrl("icemaker.png"),
+//   cooking: resolveMediaUrl("oven.png"),
+//   frying: resolveMediaUrl("fryer.png"),
+//   bakery: resolveMediaUrl("mixer.png"),
+//   drinks: resolveMediaUrl("juice.png"),
 // };
 
 /** Static tint fallback per frontend category id. */
@@ -142,8 +143,8 @@ const SLUG_TO_FRONTEND_ID: Record<string, string> = {
 
 /**
  * Convert a Laravel CategoryResource into the frontend Category type.
- * Preserves static fallbacks for `image`/`tint` when the backend does
- * not supply them, and maps the backend slug to the frontend id.
+ * The backend is the single source of truth for `image`; missing values
+ * fall back to the backend catalog hero image.
  */
 export function adaptCategory(raw: LaravelCategory): Category {
   const frontendId = SLUG_TO_FRONTEND_ID[raw.slug] ?? raw.slug;
@@ -151,7 +152,7 @@ export function adaptCategory(raw: LaravelCategory): Category {
     id: frontendId,
     name: raw.name,
     desc: raw.description ?? "",
-    image: raw.image_url ?? "/images/hero.png",
+    image: resolveMediaUrl(raw.image_url, "hero.png"),
     tint: "#0B4EA2",// this temp
   };
 }
@@ -193,7 +194,7 @@ export function adaptProduct(raw: LaravelProduct): Product {
     spec: raw.short_description ?? raw.description ?? "",
     price,
     oldPrice,
-    image: mediaUrl?? "/images/hero.png",
+    image: resolveMediaUrl(mediaUrl, "hero.png"),
     category: frontendCategory,
     freeShipping: undefined,
     startsFrom: undefined,

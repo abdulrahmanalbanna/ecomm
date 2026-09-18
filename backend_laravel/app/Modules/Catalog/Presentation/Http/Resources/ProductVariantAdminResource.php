@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\Catalog\Presentation\Http\Resources;
 
+use App\Modules\Catalog\Support\CatalogMedia;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -22,7 +23,7 @@ class ProductVariantAdminResource extends JsonResource
             'weight_grams'     => $this->weight_grams,
             'dimensions'       => $this->dimensions,
             'attributes'       => $this->attributes,
-            'media'            => $this->media,
+            'media'            => CatalogMedia::normalizeMedia($this->media),
             'is_active'        => $this->is_active,
             'created_at'       => $this->created_at?->toIso8601String(),
             'updated_at'       => $this->updated_at?->toIso8601String(),
