@@ -118,6 +118,7 @@ export function CategoryTiles({
                 alt={c.name}
                 width={512}
                 height={400}
+                sizes="(min-width: 768px) 256px, 224px"
                 className="h-40 w-full object-cover opacity-80 transition-all duration-700 group-hover:scale-110 group-hover:opacity-100 md:h-44"
               />
               <div className="absolute inset-x-0 top-0 h-full bg-gradient-to-t from-primary-950 via-primary-950/35 to-transparent" />

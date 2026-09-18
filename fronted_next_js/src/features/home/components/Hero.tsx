@@ -128,7 +128,7 @@ export function Hero({ categories }: { categories?: Category[] }) {
         <div className="reveal in relative" style={{ "--rv-delay": "120ms" } as CSSProperties}>
           <div className="relative overflow-hidden rounded-2xl ring-1 ring-secondary-500/25 shadow-lift">
             <div className="aspect-[4/3] overflow-hidden">
-              <Image src={IMG.hero} alt={t("heroImageAlt")} width={1200} height={900} priority fetchPriority="high" loading="eager" className="anim-kenburns h-full w-full object-cover" />
+              <Image src={IMG.hero} alt={t("heroImageAlt")} width={1200} height={900} sizes="(min-width: 1024px) 50vw, 100vw" priority fetchPriority="high" loading="eager" className="anim-kenburns h-full w-full object-cover" />
             </div>
 
             {/* steam wisps */}
