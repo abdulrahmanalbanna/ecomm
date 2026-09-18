@@ -402,8 +402,8 @@ export function WhyUs() {
   const t = useTranslations("home.why");
   const ref = useRevealObserver<HTMLElement>();
   const { settings } = useShopSettings();
-  const stats = settings.stats;
-  const features = settings.features;
+  const stats = settings.stats ?? [];
+  const features = settings.features ?? [];
   return (
     <section id="why-us" ref={ref} className="relative scroll-mt-28 overflow-hidden bg-primary-900 py-16">
       <div className="pattern-dots absolute inset-0" aria-hidden />
@@ -447,7 +447,7 @@ export function WhyUs() {
               style={{ "--rv-delay": `${i * 110}ms` } as CSSProperties}
             >
               <span className="grid h-14 w-14 shrink-0 place-items-center rounded-xl bg-primary-800 text-secondary-400 ring-1 ring-primary-700 transition-all duration-300 group-hover:scale-110 group-hover:bg-secondary-500 group-hover:text-primary-950">
-                {featureIcons[f.icon]}
+                {featureIcons[f.icon] ?? <IconShield size={26} />}
               </span>
               <div>
                 <div className="flex items-baseline gap-3">

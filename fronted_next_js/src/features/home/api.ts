@@ -119,28 +119,6 @@ const SLUG_TO_FRONTEND_ID: Record<string, string> = {
   drinks: "drinks",
 };
 
-/** Static image fallback per frontend category id (backend catalog). */
-// const CATEGORY_IMAGE: Record<string, string> = {
-//   coffee: resolveMediaUrl("espresso.png"),
-//   grinders: resolveMediaUrl("grinder.png"),
-//   cooling: resolveMediaUrl("icemaker.png"),
-//   cooking: resolveMediaUrl("oven.png"),
-//   frying: resolveMediaUrl("fryer.png"),
-//   bakery: resolveMediaUrl("mixer.png"),
-//   drinks: resolveMediaUrl("juice.png"),
-// };
-
-/** Static tint fallback per frontend category id. */
-// const CATEGORY_TINT: Record<string, string> = {
-//   coffee: "#FF6A00",
-//   grinders: "#062B6F",
-//   cooling: "#0B4EA2",
-//   cooking: "#D65600",
-//   frying: "#B44A00",
-//   bakery: "#1459B8",
-//   drinks: "#FF862E",
-// };
-
 /**
  * Convert a Laravel CategoryResource into the frontend Category type.
  * The backend is the single source of truth for `image`; missing values
@@ -165,7 +143,7 @@ export function adaptCategory(raw: LaravelCategory): Category {
  */
 function pickDefaultVariant(raw: LaravelProduct): { id: number; sku?: string | null; name?: string | null; price: number; compare_at_price?: number | null; weight_grams?: number | null; dimensions?: Record<string, string> | null; is_active: boolean; } | null {
   const variants = raw.variants ?? [];
-  const sellable = variants.find((v) => v.is_active && v.price > 0);
+  const sellable = variants.find((v) => v.is_active && Number(v.price) > 0);
   return sellable ?? variants.find((v) => v.is_active) ?? variants[0] ?? null;
 }
 

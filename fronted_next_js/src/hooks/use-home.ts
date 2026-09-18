@@ -64,11 +64,7 @@ export function useCountUp(target: number, active: boolean, duration = 1600) {
   const reduced = usePrefersReducedMotion();
   const [value, setValue] = useState(0);
   useEffect(() => {
-    if (!active) return;
-    if (reduced) {
-      setValue(target);
-      return;
-    }
+    if (!active || reduced) return;
     let raf = 0;
     const start = performance.now();
     const tick = (now: number) => {
@@ -80,6 +76,11 @@ export function useCountUp(target: number, active: boolean, duration = 1600) {
     raf = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf);
   }, [target, active, duration, reduced]);
+
+  if (reduced) {
+    return active ? target : 0;
+  }
+
   return value;
 }
 

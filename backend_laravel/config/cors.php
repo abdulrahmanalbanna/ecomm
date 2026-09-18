@@ -25,7 +25,7 @@ return [
     'allowed_methods' => ['*'],
 
     'allowed_origins' => array_values(array_filter(array_unique(array_merge(
-        ['http://localhost:3000', 'http://127.0.0.1:3000'],
+        ['http://localhost:3000', 'http://127.0.0.1:3000', 'http://localhost:3200', 'http://127.0.0.1:3200'],
         array_filter(explode(',', (string) env('CORS_ALLOWED_ORIGINS', ''))),
         array_filter([env('FRONTEND_URL'), env('NEXT_PUBLIC_SITE_URL')]),
     )))),

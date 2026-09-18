@@ -34,7 +34,9 @@ export function Logo({ light = false }: { light?: boolean }) {
 function Ticker() {
   const locale = useLocale();
   const { settings } = useShopSettings();
-  const items = [...settings.ticker_items, ...settings.ticker_items];
+  const tickerItems = settings.ticker_items ?? [];
+  if (tickerItems.length === 0) return null;
+  const items = [...tickerItems, ...tickerItems];
   return (
     <div className="overflow-hidden bg-primary-950 py-1.5" dir="ltr" suppressHydrationWarning>
       <div className="anim-ticker flex w-max items-center gap-8">

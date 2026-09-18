@@ -18,7 +18,7 @@ use Tests\TestCase;
 final class ModuleRegistrationTest extends TestCase
 {
     /**
-     * The ModuleRegistry must report exactly the expected 12 modules.
+     * The ModuleRegistry must report exactly the expected 13 modules.
      */
     public function test_module_registry_reports_all_twelve_modules(): void
     {
@@ -26,7 +26,7 @@ final class ModuleRegistrationTest extends TestCase
 
         $moduleNames = $registry->moduleNames();
 
-        $this->assertCount(12, $moduleNames);
+        $this->assertCount(13, $moduleNames);
     }
 
     /**
@@ -39,6 +39,7 @@ final class ModuleRegistrationTest extends TestCase
         $registry = $this->app->make(ModuleRegistry::class);
 
         $expected = [
+            'Settings',
             'Identity',
             'Customer',
             'Catalog',
