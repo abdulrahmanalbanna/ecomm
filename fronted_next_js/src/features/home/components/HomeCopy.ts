@@ -1,7 +1,7 @@
-"use client";
+// "use client";
 
-import {useTranslations} from "next-intl";
+// import {useTranslations} from "next-intl";
 
-export function useHomeCopy() {
-  return useTranslations("home");
-}
+// export function useHomeCopy() {
+//   return useTranslations("home");
+// }

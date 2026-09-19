@@ -9,7 +9,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: L
   const { locale } = await params;
   setRequestLocale(locale);
   const t = await getTranslations({ locale, namespace: "home" });
-  const title = locale === "ar" ? `${branding.name.ar} — المعدات التجارية` : locale === "fr" ? `${branding.name.en} — Équipements professionnels` : `${branding.name.en} — Commercial Equipment`;
+  const title = locale === "ar" ? `${branding.name.ar} — للمعدات التجارية` : locale === "fr" ? `${branding.name.en} — Équipements professionnels` : `${branding.name.en} — Commercial Equipment`;
   const description = t("brandTagline");
   return {
     title,
