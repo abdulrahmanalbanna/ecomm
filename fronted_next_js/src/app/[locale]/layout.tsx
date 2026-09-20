@@ -4,7 +4,6 @@ import { notFound } from "next/navigation";
 import { routing } from "@/lib/i18n/routing";
 import { RTL_LOCALES, type Locale } from "@/types/locale";
 import { Providers } from "@/components/layout/Providers";
-import { LanguageSwitcher } from "@/components/common/LanguageSwitcher";
 
 export default async function LocaleLayout({
   children,
@@ -16,9 +15,7 @@ export default async function LocaleLayout({
   const { locale } = await params;
   if (!routing.locales.includes(locale as Locale)) notFound();
 
-  // NOTE: `setRequestLocale(locale)` used to live here, but it is deprecated in
-  // next-intl 4.x (its replacement, `next/root-params`, only works when
-  // `[locale]` is the *root* layout segment — here `src/app/layout.tsx` is the
+  //src/app/layout.tsx` is the
   // root layout, so `next typegen` reports "No root params detected").
   // Passing the locale explicitly to `getMessages` is the supported,
   // static-rendering-safe equivalent: it seeds the per-request message cache
@@ -34,7 +31,6 @@ export default async function LocaleLayout({
       <body>
         <NextIntlClientProvider locale={locale} messages={messages}>
           <Providers>
-            <LanguageSwitcher />
             {children}
           </Providers>
         </NextIntlClientProvider>

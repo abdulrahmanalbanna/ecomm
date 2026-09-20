@@ -7,10 +7,11 @@ import { useLocale, useTranslations } from "next-intl";
 import { categories as staticCategories, formatPrice, pickLocale, productHref, type CatalogState, type Category, type Product } from "../catalog";
 import { useShopSettings } from "../use-settings";
 import { branding } from "@/config/branding";
-import { Link } from "@/lib/i18n/navigation";
+import { Link, usePathname, useRouter } from "@/lib/i18n/navigation";
 import { useCart } from "@/stores/cart";
 import { useMounted } from "@/hooks/use-home";
-import { IconCart, IconChevron, IconPhone, IconSearch, IconUser, IconWhatsApp } from "@/features/home/components/Icons";
+import { IconCart, IconCheck, IconChevron, IconLanguage, IconPhone, IconSearch, IconUser, IconWhatsApp } from "@/features/home/components/Icons";
+import { routing } from "@/lib/i18n/routing";
 
 export function Logo({ light = false, priority = false }: { light?: boolean; priority?: boolean }) {
   const t = useTranslations("home");
@@ -154,6 +155,64 @@ function SearchBox({
   );
 }
 
+function LanguageButton() {
+  const t = useTranslations("home");
+  const locale = useLocale();
+  const pathname = usePathname();
+  const router = useRouter();
+  const [open, setOpen] = useState(false);
+  const boxRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const onDoc = (e: MouseEvent) => {
+      if (boxRef.current && !boxRef.current.contains(e.target as Node)) setOpen(false);
+    };
+    document.addEventListener("mousedown", onDoc);
+    return () => document.removeEventListener("mousedown", onDoc);
+  }, []);
+
+  const switchTo = (l: string) => {
+    setOpen(false);
+    if (l !== locale) router.replace(pathname, { locale: l });
+  };
+
+  return (
+    <div ref={boxRef} className="relative">
+      <button
+        onClick={() => setOpen((v) => !v)}
+        aria-label={t("changeLanguage")}
+        aria-haspopup="listbox"
+        aria-expanded={open}
+        className="relative grid h-10 w-10 place-items-center rounded-xl border border-muted-200 bg-surface p-2 text-primary-950 transition-colors hover:border-secondary-500"
+      >
+        <IconLanguage size={25} />
+      </button>
+
+      {open && (
+        <div
+          role="listbox"
+          className="anim-rise absolute end-0 top-[calc(100%+8px)] z-50 min-w-36 overflow-hidden rounded-xl border border-muted-200 bg-surface shadow-lift"
+        >
+          {routing.locales.map((l) => (
+            <button
+              key={l}
+              role="option"
+              aria-selected={l === locale}
+              onClick={() => switchTo(l)}
+              className={`flex w-full items-center justify-between gap-3 px-4 py-2.5 text-[13px] font-bold transition-colors hover:bg-primary-50 ${
+                l === locale ? "text-secondary-700" : "text-muted-600"
+              }`}
+            >
+              <span className="uppercase">{l}</span>
+              {l === locale && <IconCheck size={15} />}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 export function Header({ catalog, settings }: { catalog: CatalogState; settings?: ReturnType<typeof useShopSettings>["settings"] | null }) {
   const t = useTranslations("home");
   const { count, badgeKey, setDrawerOpen } = useCart();
@@ -218,6 +277,8 @@ export function Header({ catalog, settings }: { catalog: CatalogState; settings?
                 <span className="block text-[13px] font-extrabold text-primary-900">{t("instantConsultation")}</span>
               </span>
             </a>
+
+            <LanguageButton />
 
             <button
               onClick={() => toastFn?.(t("loginSoon"))}
