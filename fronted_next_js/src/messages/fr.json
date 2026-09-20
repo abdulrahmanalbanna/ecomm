@@ -235,7 +235,8 @@
       "description": "Description",
       "vatNote": "Prix TTC (15% de TVA)",
       "saveAmount": "Économisez {amount} SAR",
-      "installments": "ou {amount} SAR / mois sans intérêts"
+      "installments": "ou {amount} SAR / mois sans intérêts",
+      "addedToast": "« {name} » ajouté au panier"
     },
     "actions": {
       "quantity": "Quantité",

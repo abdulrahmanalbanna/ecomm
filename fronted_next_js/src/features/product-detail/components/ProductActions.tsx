@@ -96,8 +96,8 @@ export function ProductActions({
 
   return (
     <div className="space-y-4">
-      {/* quantity + CTA */}
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-start">
+      {/* quantity + CTA — single row, both controls vertically centered */}
+      <div className="flex items-center gap-8">
         <QuantityInput
           label={t("actions.quantity")}
           value={quantity}
@@ -105,13 +105,13 @@ export function ProductActions({
           max={max}
           disabled={isOutOfStock}
         />
-        <div className="flex-1 space-y-1.5">
+        <div className="flex min-w-0 flex-1 flex-col justify-center">
           <button
             type="button"
             onClick={handleAdd}
             disabled={isOutOfStock || pending}
             aria-live="polite"
-            className={`relative inline-flex h-12 w-full items-center justify-center gap-2 overflow-hidden rounded-xl font-display text-[15px] font-extrabold transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-secondary-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60 active:scale-[0.99] ${
+             className={`relative inline-flex h-10 mt-6 w-full items-center justify-center gap-2 self-stretch overflow-hidden rounded-xl font-display text-[15px] font-extrabold transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-secondary-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60 active:scale-[0.99] ${
               isOutOfStock
                 ? "bg-muted-200 text-muted-400"
                 : "bg-primary-800 text-white hover:bg-secondary-500 hover:text-primary-950"
@@ -138,17 +138,21 @@ export function ProductActions({
               </>
             )}
           </button>
-          {showQtyError && (
-            <p className="text-[12px] font-medium text-danger" role="alert">
-              {t("actions.minQuantity")}
-            </p>
-          )}
-          {inCart > 0 && !isOutOfStock && (
-            <p className="text-[12px] font-medium text-muted-500" role="status">
-              {t("actions.added")} ({inCart})
-            </p>
-          )}
         </div>
+      </div>
+
+      {/* quantity validation + in-cart status, below the CTA row */}
+      <div className="space-y-1">
+        {showQtyError && (
+          <p className="text-[12px] font-medium text-danger" role="alert">
+            {t("actions.minQuantity")}
+          </p>
+        )}
+        {inCart > 0 && !isOutOfStock && (
+          <p className="text-[12px] font-medium text-muted-500" role="status">
+            {t("actions.added")} ({inCart})
+          </p>
+        )}
       </div>
 
       {/* price + VAT note */}

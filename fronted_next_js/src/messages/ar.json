@@ -235,7 +235,8 @@
       "description": "الوصف",
       "vatNote": "الأسعار تشمل ضريبة القيمة المضافة ١٥٪",
       "saveAmount": "وفّر {amount} ر.س",
-      "installments": "أو {amount} ر.س / شهريًا بدون فوائد"
+      "installments": "أو {amount} ر.س / شهريًا بدون فوائد",
+      "addedToast": "أُضيف «{name}» إلى السلة"
     },
     "actions": {
       "quantity": "الكمية",

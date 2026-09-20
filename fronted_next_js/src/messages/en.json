@@ -235,7 +235,8 @@
       "description": "Description",
       "vatNote": "Prices include 15% VAT",
       "saveAmount": "Save {amount} SAR",
-      "installments": "or {amount} SAR / month interest-free"
+      "installments": "or {amount} SAR / month interest-free",
+      "addedToast": "Added “{name}” to your cart"
     },
     "actions": {
       "quantity": "Quantity",

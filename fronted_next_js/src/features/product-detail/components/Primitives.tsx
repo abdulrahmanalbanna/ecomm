@@ -188,7 +188,7 @@ export function QuantityInput({
           onClick={() => onChange(clampQuantity(value - 1, upper))}
           disabled={disabled || atMin}
           aria-label={t("actions.decrease")}
-          className="grid h-9 w-9 place-items-center rounded-lg text-muted-700 transition-colors hover:bg-primary-50 disabled:pointer-events-none disabled:opacity-40"
+          className="grid h-8 w-9 place-items-center rounded-lg text-muted-700 transition-colors hover:bg-primary-50 disabled:pointer-events-none disabled:opacity-40"
         >
           <span aria-hidden="true" className="text-lg leading-none">−</span>
         </button>
@@ -204,14 +204,14 @@ export function QuantityInput({
           aria-live="polite"
           onChange={(event) => onChange(clampQuantity(Number(event.target.value), upper))}
           onBlur={(event) => onChange(clampQuantity(Number(event.target.value) || min, upper))}
-          className="h-9 w-12 border-0 bg-transparent text-center font-bold text-muted-900 outline-none tabular [appearance:textfield] focus:ring-0 disabled:opacity-50"
+          className="h-8 w-12 border-0 bg-transparent text-center font-bold text-muted-900 outline-none tabular [appearance:textfield] focus:ring-0 disabled:opacity-50"
         />
         <button
           type="button"
           onClick={() => onChange(clampQuantity(value + 1, upper))}
           disabled={disabled || atMax}
           aria-label={t("actions.increase")}
-          className="grid h-9 w-9 place-items-center rounded-lg text-muted-700 transition-colors hover:bg-primary-50 disabled:pointer-events-none disabled:opacity-40"
+          className="grid h-8 w-9 place-items-center rounded-lg text-muted-700 transition-colors hover:bg-primary-50 disabled:pointer-events-none disabled:opacity-40"
         >
           <span aria-hidden="true" className="text-lg leading-none">+</span>
         </button>
