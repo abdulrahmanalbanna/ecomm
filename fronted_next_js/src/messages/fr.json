@@ -197,7 +197,9 @@
       "startsFrom": "À partir de",
       "freeShipping": "Livraison gratuite",
       "shipsAll": "Livré dans toutes les villes",
-      "addedToast": "« {name} » ajouté au panier"
+      "addedToast": "« {name} » ajouté au panier",
+      "details": "Voir les détails",
+      "viewDetails": "Voir les détails du produit : {name}"
     }
   },
   "pdp": {

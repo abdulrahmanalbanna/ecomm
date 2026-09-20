@@ -1,4 +1,5 @@
 import { adaptCategory, adaptProduct } from "../api";
+import { productHref } from "../catalog";
 import type { LaravelCategory, LaravelProduct } from "@/lib/api/client";
 import assert from "node:assert/strict";
 import { test } from "node:test";
@@ -63,4 +64,29 @@ test("adaptProduct transforms LaravelProduct with sellable variant correctly", (
   assert.equal(product.image, "http://localhost:8000/storage/catalog/futura.png");
   assert.equal(product.rating, 0);
   assert.equal(product.reviews, 0);
+});
+
+test("adaptProduct exposes the backend slug so cards can link to the PDP", () => {
+  const product = adaptProduct({
+    public_id: "prod-uuid-1234",
+    slug: "espresso-futura-2g",
+    name: "Futura 2G Espresso Machine",
+    description: "Commercial espresso machine",
+    is_featured: false,
+    variants: [{ id: 1, price: 58000, is_active: true }],
+  });
+
+  assert.equal(product.slug, "espresso-futura-2g");
+});
+
+test("productHref prefers the slug and falls back to the public id", () => {
+  assert.equal(productHref({ id: "prod-uuid-1234", slug: "espresso-futura-2g" }), "/products/espresso-futura-2g");
+  // The backend `show` route resolves public_id *or* slug, so a missing slug
+  // (static fallback catalog) still lands on the right page.
+  assert.equal(productHref({ id: "prod-uuid-1234" }), "/products/prod-uuid-1234");
+  // Slugs are free-form — the segment must be encoded.
+  assert.equal(
+    productHref({ id: "1", slug: "ماكينة إسبريسو ٢" }),
+    "/products/%D9%85%D8%A7%D9%83%D9%8A%D9%86%D8%A9%20%D8%A5%D8%B3%D8%A8%D8%B1%D9%8A%D8%B3%D9%88%20%D9%A2",
+  );
 });

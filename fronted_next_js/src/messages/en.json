@@ -197,7 +197,9 @@
       "startsFrom": "Starting from",
       "freeShipping": "Free delivery",
       "shipsAll": "Ships to all cities",
-      "addedToast": "Added “{name}” to your cart"
+      "addedToast": "Added “{name}” to your cart",
+      "details": "View details",
+      "viewDetails": "View product details: {name}"
     }
   },
   "pdp": {

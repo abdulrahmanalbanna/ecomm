@@ -1,20 +1,48 @@
-import {NextIntlClientProvider} from "next-intl";
-import {getMessages, setRequestLocale} from "next-intl/server";
-import {notFound} from "next/navigation";
-import {routing} from "@/lib/i18n/routing";
-import {RTL_LOCALES, type Locale} from "@/types/locale";
-import {Providers} from "@/components/layout/Providers";
-import {LanguageSwitcher} from "@/components/common/LanguageSwitcher";
+import { NextIntlClientProvider } from "next-intl";
+import { getMessages } from "next-intl/server";
+import { notFound } from "next/navigation";
+import { routing } from "@/lib/i18n/routing";
+import { RTL_LOCALES, type Locale } from "@/types/locale";
+import { Providers } from "@/components/layout/Providers";
+import { LanguageSwitcher } from "@/components/common/LanguageSwitcher";
 
-export default async function LocaleLayout({children,params}:{children:React.ReactNode;params:Promise<{locale:string}>}) {
-  const {locale}=await params;
-  if(!routing.locales.includes(locale as Locale)) notFound();
-  // Required for static rendering: without this, all locales share the
-  // default-locale messages at prerender time, so switching locale only
-  // flips `dir` while `t()` text stays stuck.
-  setRequestLocale(locale);
-  const messages=await getMessages();
-  const dir=RTL_LOCALES.includes(locale as Locale)?"rtl":"ltr";
-  return <html lang={locale} dir={dir}><body><NextIntlClientProvider locale={locale} messages={messages}><Providers><LanguageSwitcher />{children}</Providers></NextIntlClientProvider></body></html>;
+export default async function LocaleLayout({
+  children,
+  params,
+}: {
+  children: React.ReactNode;
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+  if (!routing.locales.includes(locale as Locale)) notFound();
+
+  // NOTE: `setRequestLocale(locale)` used to live here, but it is deprecated in
+  // next-intl 4.x (its replacement, `next/root-params`, only works when
+  // `[locale]` is the *root* layout segment — here `src/app/layout.tsx` is the
+  // root layout, so `next typegen` reports "No root params detected").
+  // Passing the locale explicitly to `getMessages` is the supported,
+  // static-rendering-safe equivalent: it seeds the per-request message cache
+  // for this locale instead of relying on the shared default-locale fallback.
+  const messages = await getMessages({ locale });
+  const dir = RTL_LOCALES.includes(locale as Locale) ? "rtl" : "ltr";
+
+  // `data-scroll-behavior="smooth"` mirrors the `scroll-behavior: smooth` rule
+  // in `globals.css` so Next.js can temporarily switch it to `auto` during
+  // route transitions (otherwise it cannot restore scroll position).
+  return (
+    <html lang={locale} dir={dir} data-scroll-behavior="smooth">
+      <body>
+        <NextIntlClientProvider locale={locale} messages={messages}>
+          <Providers>
+            <LanguageSwitcher />
+            {children}
+          </Providers>
+        </NextIntlClientProvider>
+      </body>
+    </html>
+  );
 }
-export function generateStaticParams(){return routing.locales.map(locale=>({locale}));}
+
+export function generateStaticParams() {
+  return routing.locales.map((locale) => ({ locale }));
+}

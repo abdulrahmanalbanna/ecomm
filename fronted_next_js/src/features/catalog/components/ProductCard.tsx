@@ -3,7 +3,8 @@
 import Image from "next/image";
 import { useRef, useState, type CSSProperties } from "react";
 import { useTranslations } from "next-intl";
-import { formatPrice, type Product } from "@/features/home/catalog";
+import { formatPrice, productHref, type Product } from "@/features/home/catalog";
+import { Link } from "@/lib/i18n/navigation";
 import { useCart } from "@/stores/cart";
 import { IconArrow, IconCart, IconCheck, IconStar, IconTruck } from "@/features/home/components/Icons";
 
@@ -39,7 +40,10 @@ export function AddButton({ id, name, compact = false }: { id: string; name: str
     <button
       onClick={onClick}
       aria-label={t("add")}
-      className={`group/add relative inline-flex shrink-0 items-center justify-center gap-1.5 overflow-hidden rounded-lg font-bold text-white transition-all duration-300 active:scale-95 ${
+      // `z-10` keeps the button above the card-wide link overlay
+      // (`.after:inset-0` on the product title) so add-to-cart never
+      // navigates to the PDP.
+      className={`group/add relative z-10 inline-flex shrink-0 items-center justify-center gap-1.5 overflow-hidden rounded-lg font-bold text-white transition-all duration-300 active:scale-95 ${
         done ? "bg-success" : "bg-primary-800 hover:bg-secondary-500 hover:text-primary-950"
       } ${compact ? "h-9 w-9 rounded-md" : "h-10 px-4 text-[13px]"}`}
     >
@@ -69,13 +73,14 @@ export function ProductCard({ p, style }: { p: Product; style?: CSSProperties })
   const t = useTranslations("home.product");
   const discount = p.oldPrice ? Math.round(((p.oldPrice - p.price) / p.oldPrice) * 100) : 0;
   const badgeLabel = p.badge === "عرض خاص" ? t("special") : p.badge === "جديد" ? t("new") : p.badge === "الأكثر مبيعًا" ? t("best") : p.badge;
+  const href = productHref(p);
   return (
     <article
       style={style}
       className="group relative flex w-full flex-col rounded-xl border border-muted-200/70 bg-surface p-3 transition-all duration-300 hover:-translate-y-1.5 hover:border-primary-300 hover:shadow-lift"
     >
       {/* badges */}
-      <div className="absolute top-3 right-3 z-10 flex flex-col items-start gap-1.5">
+      <div className="absolute top-3 right-3 z-20 flex flex-col items-start gap-1.5">
         {p.badge && (
           <span
             className={`rounded-md px-2 py-0.5 text-[10.5px] font-bold ${
@@ -96,8 +101,12 @@ export function ProductCard({ p, style }: { p: Product; style?: CSSProperties })
         )}
       </div>
 
-      {/* image */}
-      <div className="relative mb-3 grid aspect-square place-items-center overflow-hidden rounded-lg bg-gradient-to-b from-primary-50 to-muted-200/40">
+      {/* image — the whole frame opens the PDP */}
+      <Link
+        href={href}
+        aria-label={t("viewDetails", { name: p.name })}
+        className="group/link relative mb-3 block aspect-square overflow-hidden rounded-lg bg-gradient-to-b from-primary-50 to-muted-200/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-secondary-500 focus-visible:ring-offset-2"
+      >
         <Image
           src={p.image}
           alt={p.name}
@@ -110,7 +119,11 @@ export function ProductCard({ p, style }: { p: Product; style?: CSSProperties })
           <span className="h-1.5 w-1.5 rounded-full bg-success" />
           {t("available")}
         </span>
-      </div>
+        <span className="absolute inset-x-0 bottom-0 flex translate-y-2 items-center justify-center gap-1 bg-primary-950/55 py-1.5 text-[11px] font-extrabold text-background opacity-0 backdrop-blur-sm transition-all duration-300 group-hover/link:translate-y-0 group-hover/link:opacity-100">
+          {t("details")}
+          <IconArrow size={13} />
+        </span>
+      </Link>
 
       {/* meta */}
       <div className="flex items-center gap-1.5 text-[11px] text-muted-400">
@@ -120,7 +133,12 @@ export function ProductCard({ p, style }: { p: Product; style?: CSSProperties })
       </div>
 
       <h3 className="mt-1 line-clamp-2 min-h-[2.5rem] font-display text-[13.5px] font-bold leading-6 text-muted-900">
-        {p.name}
+        <Link
+          href={href}
+          className="after:absolute after:inset-0 after:content-[''] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-secondary-500 focus-visible:ring-offset-2"
+        >
+          {p.name}
+        </Link>
       </h3>
       <p className="mt-0.5 line-clamp-1 text-[11.5px] text-muted-400">{p.spec}</p>
 

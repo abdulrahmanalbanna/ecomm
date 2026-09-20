@@ -170,6 +170,8 @@ export function adaptProduct(raw: LaravelProduct): Product {
 
   return {
     id: raw.public_id,
+    // PDP route segment (`/products/{slug}`); the card links here.
+    slug: raw.slug,
     name: raw.name,
     spec: raw.short_description ?? raw.description ?? "",
     price,

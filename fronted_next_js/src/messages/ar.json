@@ -197,7 +197,9 @@
       "startsFrom": "يبدأ من",
       "freeShipping": "توصيل مجاني",
       "shipsAll": "يشحن لكل المدن",
-      "addedToast": "أُضيف «{name}» إلى السلة"
+      "addedToast": "أُضيف «{name}» إلى السلة",
+      "details": "عرض التفاصيل",
+      "viewDetails": "عرض تفاصيل المنتج: {name}"
     }
   },
   "pdp": {

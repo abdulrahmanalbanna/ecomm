@@ -31,6 +31,14 @@ export const pickLocale = (locale: string | undefined, ar: string, en: string) =
 
 export type Product = {
   id: string;
+  /**
+   * URL segment of the PDP route (`/{locale}/products/{slug}`).
+   *
+   * Live products carry the backend `slug`; the static fallback catalog has
+   * none, so `productHref()` falls back to the `id` (which the backend
+   * `show` endpoint also accepts — public_id *or* slug).
+   */
+  slug?: string;
   name: string;
   spec: string;
   price: number;
@@ -44,7 +52,18 @@ export type Product = {
   reviews: number;
 };
 
-export const FREE_SHIPPING_THRESHOLD = 1500;
+/**
+ * Build the PDP href for a catalog product.
+ *
+ * The backend `GET /v1/catalog/products/{publicId|slug}` route resolves both
+ * identities, so a missing `slug` (static fallback catalog) still lands on the
+ * right page by `id`. The segment is encoded because slugs are free-form.
+ */
+export function productHref(p: Pick<Product, "id" | "slug">): string {
+  return `/products/${encodeURIComponent(p.slug || p.id)}`;
+}
+
+// export const FREE_SHIPPING_THRESHOLD = 1500;
 
 const CATALOG_IMG_BASE = getBackendStorageBase();
 

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { getTranslations, setRequestLocale } from "next-intl/server";
+import { getTranslations } from "next-intl/server";
 import { HomePage } from "@/features/home/components/HomePage";
 import { getHomeServerData } from "@/features/home/api";
 import type { Locale } from "@/types/locale";
@@ -7,7 +7,6 @@ import { branding } from "@/config/branding";
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: Locale }> }): Promise<Metadata> {
   const { locale } = await params;
-  setRequestLocale(locale);
   const t = await getTranslations({ locale, namespace: "home" });
   const title = locale === "ar" ? `${branding.name.ar} — للمعدات التجارية` : locale === "fr" ? `${branding.name.en} — Équipements professionnels` : `${branding.name.en} — Commercial Equipment`;
   const description = t("brandTagline");
@@ -25,7 +24,6 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: L
 
 export default async function Page({ params }: { params: Promise<{ locale: Locale }> }) {
   const { locale } = await params;
-  setRequestLocale(locale);
 
   const { settings, categories, products, byId, byCategory } = await getHomeServerData();
 

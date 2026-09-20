@@ -14,18 +14,26 @@ export const getApiBaseUrl = () => (rawBaseUrl ?? "").replace(/\/+$/, "");
 
 const baseUrl = getApiBaseUrl();
 
-async function request<T>(path:string,init:RequestInit={}):Promise<LaravelResponse<T>>{
- const response=await fetch(`${baseUrl ?? ""}${path}`,{cache: init.cache ?? "no-store", ...init,headers:{Accept:"application/json","Content-Type":"application/json",...(init.headers??{})}});
+/** RequestInit + the Next.js fetch extension used for ISR (`next.revalidate`). */
+type NextFetchInit = RequestInit & { next?: { revalidate?: number | false } };
+
+async function request<T>(path:string,init:NextFetchInit={}):Promise<LaravelResponse<T>>{
+ // `cache: "no-store"` and `next: { revalidate }` are mutually exclusive —
+ // Next.js logs "only one should be specified" when both are present. The
+ // no-store default is therefore applied only when the caller has not opted
+ // into ISR (and has not set an explicit cache mode).
+ const wantsRevalidate = init.next?.revalidate != null;
+ const response=await fetch(`${baseUrl ?? ""}${path}`,{...(wantsRevalidate?{}:{cache: init.cache ?? "no-store"}), ...init,headers:{Accept:"application/json","Content-Type":"application/json",...(init.headers??{})}});
  const payload=await response.json().catch(()=>null) as LaravelResponse<T>&{errors?:LaravelValidationErrors};
  if(!response.ok) throw new ApiError(response.status,payload?.errors,payload?.message);
  return payload;
 }
 export const apiClient={
- get:<T>(path:string,init?:RequestInit)=>request<T>(path,{...init,method:"GET"}),
- post:<T>(path:string,body:unknown,init?:RequestInit)=>request<T>(path,{...init,method:"POST",body:JSON.stringify(body)}),
- put:<T>(path:string,body:unknown,init?:RequestInit)=>request<T>(path,{...init,method:"PUT",body:JSON.stringify(body)}),
- patch:<T>(path:string,body:unknown,init?:RequestInit)=>request<T>(path,{...init,method:"PATCH",body:JSON.stringify(body)}),
- delete:<T>(path:string,init?:RequestInit)=>request<T>(path,{...init,method:"DELETE"})
+ get:<T>(path:string,init?:NextFetchInit)=>request<T>(path,{...init,method:"GET"}),
+ post:<T>(path:string,body:unknown,init?:NextFetchInit)=>request<T>(path,{...init,method:"POST",body:JSON.stringify(body)}),
+ put:<T>(path:string,body:unknown,init?:NextFetchInit)=>request<T>(path,{...init,method:"PUT",body:JSON.stringify(body)}),
+ patch:<T>(path:string,body:unknown,init?:NextFetchInit)=>request<T>(path,{...init,method:"PATCH",body:JSON.stringify(body)}),
+ delete:<T>(path:string,init?:NextFetchInit)=>request<T>(path,{...init,method:"DELETE"})
 };
 
 /**
@@ -59,6 +67,30 @@ export interface LaravelCategory {
 }
 
 /**
+ * The brand column as the backend actually serves it.
+ *
+ * `products.brand` is a plain `VARCHAR(150)` string (see
+ * `database/sql/005_products_attributes_variants.sql`), so the public
+ * resource emits a scalar — not an object. A future refactor may replace it
+ * with the `brands` table relation (`brand_id`), hence the union.
+ */
+export type LaravelBrand =
+  | string
+  | null
+  | undefined
+  | { id: number; name: string; slug?: string | null; is_active?: boolean };
+
+/**
+ * The tags column as the backend actually serves it.
+ *
+ * `products.tags` is a Postgres `TEXT[]` decoded to a flat string array by
+ * `PostgresTextArray` (see `app/Shared/Infrastructure/Database/Casts/PostgresTextArray.php`),
+ * so the public resource emits plain strings — not tag objects. The object
+ * shape is tolerated because the frontend assumed it before the migration.
+ */
+export type LaravelTag = string | { id: number; name: string; slug?: string | null; is_active?: boolean };
+
+/**
  * Transform Laravel ProductPublicResource into the frontend Product type.
  * Laravel ProductPublicResource fields: public_id, slug, name, description,
  * short_description, brand, tags, media, specifications, is_featured,
@@ -70,8 +102,8 @@ export interface LaravelProduct {
   name: string;
   description: string;
   short_description?: string | null;
-  brand?: { id: number; name: string; slug?: string | null; is_active: boolean } | null;
-  tags?: Array<{ id: number; name: string; slug?: string | null; is_active: boolean }> | null;
+  brand?: LaravelBrand;
+  tags?: LaravelTag[] | null;
   media?: Array<{ id: number; url?: string | null; alt_text?: string | null; type?: string | null }> | null;
   specifications?: Record<string, string> | null;
   is_featured: boolean;

@@ -4,10 +4,11 @@ import Image from "next/image";
 
 import { useEffect, useRef, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
-import { categories as staticCategories, formatPrice, pickLocale, type Category, type Product } from "../catalog";
+import { categories as staticCategories, formatPrice, pickLocale, productHref, type Category, type Product } from "../catalog";
 import { useShopSettings } from "../use-settings";
 import type { CatalogState } from "../use-catalog";
 import { branding } from "@/config/branding";
+import { Link } from "@/lib/i18n/navigation";
 import { useCart } from "@/stores/cart";
 import { useMounted } from "@/hooks/use-home";
 import { IconCart, IconChevron, IconPhone, IconSearch, IconUser, IconWhatsApp } from "@/features/home/components/Icons";
@@ -128,9 +129,9 @@ function SearchBox({
             <p className="px-4 py-5 text-center text-[13px] font-bold text-muted-400">{t("noResults", { query: q })}</p>
           ) : (
             results.map((p: Product) => (
-              <a
+              <Link
                 key={p.id}
-                href={`#rail-${p.category}`}
+                href={productHref(p)}
                 onClick={() => setOpen(false)}
                 className="flex items-center gap-3 border-b border-muted-200/50 px-3 py-2 transition-colors last:border-0 hover:bg-primary-50"
               >
@@ -142,7 +143,7 @@ function SearchBox({
                 <span className="font-display text-sm font-extrabold text-primary-800 tabular">
                   {formatPrice(p.price)} <span className="text-[10px] text-muted-400">SAR</span>
                 </span>
-              </a>
+              </Link>
             ))
           )}
         </div>

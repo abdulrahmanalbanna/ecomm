@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { getLocale, getTranslations, setRequestLocale } from "next-intl/server";
+import { getTranslations } from "next-intl/server";
 import { getProductDetailServer, getRelatedServer } from "@/features/product-detail/api";
 import { ProductDetailPage } from "@/features/product-detail/components/ProductDetailPage";
 import { branding } from "@/config/branding";
@@ -43,7 +43,6 @@ export async function generateMetadata({
   params: Promise<RouteParams>;
 }): Promise<Metadata> {
   const { locale, slug } = await params;
-  setRequestLocale(locale);
   const t = await getTranslations({ locale, namespace: "pdp" });
 
   const product = await getProductDetailServer(slug, locale);
@@ -88,7 +87,6 @@ export async function generateMetadata({
 
 export default async function Page({ params }: { params: Promise<RouteParams> }) {
   const { locale, slug } = await params;
-  setRequestLocale(locale);
   const t = await getTranslations({ locale, namespace: "pdp" });
 
   const product = await getProductDetailServer(slug, locale);
@@ -128,14 +126,14 @@ export default async function Page({ params }: { params: Promise<RouteParams> })
     },
     ...(product.summary.count > 0
       ? {
-          aggregateRating: {
-            "@type": "AggregateRating",
-            ratingValue: Number(product.summary.average.toFixed(1)),
-            reviewCount: product.summary.count,
-            bestRating: 5,
-            worstRating: 1,
-          },
-        }
+        aggregateRating: {
+          "@type": "AggregateRating",
+          ratingValue: Number(product.summary.average.toFixed(1)),
+          reviewCount: product.summary.count,
+          bestRating: 5,
+          worstRating: 1,
+        },
+      }
       : {}),
   };
 

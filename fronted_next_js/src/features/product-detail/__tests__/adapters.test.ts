@@ -148,3 +148,35 @@ test("adaptProductDetail tolerates a product with no variants", () => {
   assert.equal(product.variants.length, 0);
   assert.equal(product.stock.availability, "in-stock");
 });
+
+// The public resource emits `products.tags` (Postgres TEXT[]) as plain strings
+// and `products.brand` (VARCHAR) as a scalar — regression tests for the crash
+// "Cannot read properties of undefined (reading 'trim')".
+test("adaptProductDetail accepts a flat string[] for tags (the live backend shape)", () => {
+  const product = adaptProductDetail(
+    baseProduct({ tags: ["espresso", "  ", "commercial", ""] }),
+    { locale: "en", slug: "p" },
+  );
+  assert.deepEqual(product.tags, ["espresso", "commercial"]);
+});
+
+test("adaptProductDetail defaults tags to an empty array when absent", () => {
+  const product = adaptProductDetail(baseProduct(), { locale: "en", slug: "p" });
+  assert.deepEqual(product.tags, []);
+});
+
+test("adaptProductDetail accepts a scalar string brand (the live backend shape)", () => {
+  const product = adaptProductDetail(baseProduct({ brand: "AURORA" }), { locale: "en", slug: "p" });
+  assert.equal(product.brand?.name, "AURORA");
+  assert.equal(product.brand?.slug, null);
+});
+
+test("adaptProductDetail treats an empty brand string as no brand", () => {
+  const product = adaptProductDetail(baseProduct({ brand: "" }), { locale: "en", slug: "p" });
+  assert.equal(product.brand, null);
+});
+
+test("adaptProductDetail tolerates a missing brand", () => {
+  const product = adaptProductDetail(baseProduct({ brand: undefined }), { locale: "en", slug: "p" });
+  assert.equal(product.brand, null);
+});

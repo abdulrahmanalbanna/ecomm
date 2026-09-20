@@ -84,6 +84,35 @@ interface LaravelReviewSummary {
 /* Adapters                                                            */
 /* ------------------------------------------------------------------ */
 
+/**
+ * Normalize the backend `brand` value into the PDP brand object.
+ *
+ * `products.brand` is a `VARCHAR(150)` string, so the public resource emits
+ * a scalar (e.g. `"AURORA"`). The object shape is accepted for forward
+ * compatibility with the `brands` relation (`brand_id`).
+ */
+function adaptBrand(raw: LaravelProduct["brand"]): ProductDetail["brand"] {
+  if (raw == null || typeof raw === "string") {
+    return raw ? { id: 0, name: raw, slug: null } : null;
+  }
+  return { id: raw.id, name: raw.name, slug: raw.slug ?? null };
+}
+
+/**
+ * Flatten the backend `tags` value into trimmed, non-empty strings.
+ *
+ * `products.tags` is a Postgres `TEXT[]` decoded to `string[]` by
+ * `PostgresTextArray`, so the public resource emits scalars — not tag
+ * objects. Both shapes are accepted so the adapter survives either.
+ */
+function adaptTags(raw: LaravelProduct["tags"]): string[] {
+  return (raw ?? [])
+    .map((t) => (typeof t === "string" ? t : t?.name ?? ""))
+    // `Boolean` alone lets a whitespace-only name through.
+    .filter((name) => name.trim())
+    .map((name) => name.trim());
+}
+
 function toAvailability(stock: number | null | undefined): ProductStock {
   if (stock == null) {
     // Unknown inventory (backend did not expose it) → assume buyable.
@@ -221,7 +250,7 @@ export function adaptProductDetail(
     name: raw.name,
     description: raw.description ?? raw.short_description ?? "",
     shortDescription: raw.short_description?.trim() ? raw.short_description : (raw.description ?? "").slice(0, 160),
-    brand: raw.brand ? { id: raw.brand.id, name: raw.brand.name, slug: raw.brand.slug ?? null } : null,
+    brand: adaptBrand(raw.brand),
     category: raw.category
       ? { id: raw.category.slug, name: raw.category.name, slug: raw.category.slug }
       : null,
@@ -229,10 +258,7 @@ export function adaptProductDetail(
     variants,
     attributes: adaptAttributes(raw),
     specifications: adaptSpecifications(raw),
-    tags: (raw.tags ?? [])
-      .map((t) => t.name)
-      // `Boolean` alone lets a whitespace-only name through.
-      .filter((name) => name.trim()),
+    tags: adaptTags(raw.tags),
     isFeatured: Boolean(raw.is_featured),
     seoTitle: raw.seo_title?.trim() ? raw.seo_title.trim() : raw.name,
     seoDescription: raw.seo_description?.trim()
@@ -365,7 +391,7 @@ function adaptRelated(raw: LaravelProduct, _locale: Locale): RelatedProduct {
     price,
     compareAtPrice: compareAt,
     image: resolveMediaUrl(mediaUrl, "hero.png"),
-    brand: raw.brand?.name ?? null,
+    brand: typeof raw.brand === "string" ? raw.brand : (raw.brand?.name ?? null),
     category: raw.category?.name ?? null,
     rating: 0,
     reviewCount: 0,
