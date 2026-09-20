@@ -15,7 +15,7 @@ export const getApiBaseUrl = () => (rawBaseUrl ?? "").replace(/\/+$/, "");
 const baseUrl = getApiBaseUrl();
 
 /** RequestInit + the Next.js fetch extension used for ISR (`next.revalidate`). */
-type NextFetchInit = RequestInit & { next?: { revalidate?: number | false } };
+export type NextFetchInit = RequestInit & { next?: { revalidate?: number | false } };
 
 async function request<T>(path:string,init:NextFetchInit={}):Promise<LaravelResponse<T>>{
  // `cache: "no-store"` and `next: { revalidate }` are mutually exclusive —

@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { HomePage } from "@/features/home/components/HomePage";
+import { RevealScope } from "@/features/home/components/RevealScope";
+import { BrandsMarquee, CtaBand, ProjectsGrid } from "@/features/home/components/HomeStatic";
 import { getHomeServerData } from "@/features/home/api";
 import type { Locale } from "@/types/locale";
 import { branding } from "@/config/branding";
@@ -34,6 +36,15 @@ export default async function Page({ params }: { params: Promise<{ locale: Local
       products={products}
       byId={byId}
       byCategory={byCategory}
+      // These three sections are static Server Components; `RevealScope` is the
+      // single client boundary that drives their scroll-reveal animation.
+      staticSections={
+        <RevealScope>
+          <ProjectsGrid />
+          <BrandsMarquee />
+          <CtaBand />
+        </RevealScope>
+      }
     />
   );
 }

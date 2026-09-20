@@ -32,8 +32,6 @@ async function loadSettings(): Promise<ShopSettings> {
   if (!inflight) {
     inflight = getHomepage()
       .then((settings) => {
-        console.log("HomePage", settings);
-
         cached = settings;
         return cached;
       })

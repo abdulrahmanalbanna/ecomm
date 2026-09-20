@@ -1,4 +1,4 @@
-import {apiClient, extractData, type LaravelCategory, type LaravelProduct} from "@/lib/api/client";
+import {apiClient, extractData, type LaravelCategory, type LaravelProduct, type NextFetchInit} from "@/lib/api/client";
 import {resolveMediaUrl} from "@/lib/media";
 import type {Category, Product} from "./catalog";
 
@@ -9,15 +9,15 @@ import type {Category, Product} from "./catalog";
  * Laravel wraps the payload in `{ data: { ... } }`, so we extract the
  * `data` field to return the raw settings object directly.
  */
-export const getPublicSettings = (): Promise<ShopSettings> =>
-  apiClient.get<ShopSettings>("/v1/settings").then(extractData);
+export const getPublicSettings = (init?: NextFetchInit): Promise<ShopSettings> =>
+  apiClient.get<ShopSettings>("/v1/settings", init).then(extractData);
 
 /**
  * Normalized public homepage payload served by Laravel.
  * `GET {NEXT_PUBLIC_API_URL}/v1/homepage` (no auth required).
  */
-export const getHomepage = (): Promise<ShopSettings> =>
-  apiClient.get<ShopSettings>("/v1/homepage").then(extractData);
+export const getHomepage = (init?: NextFetchInit): Promise<ShopSettings> =>
+  apiClient.get<ShopSettings>("/v1/homepage", init).then(extractData);
 
 /**
  * Public categories served by Laravel
@@ -25,8 +25,8 @@ export const getHomepage = (): Promise<ShopSettings> =>
  *
  * Laravel returns `{ data: CategoryResource[] }`; we extract the array.
  */
-export const getCategories = (): Promise<LaravelCategory[]> =>
-  apiClient.get<LaravelCategory[]>("/v1/catalog/categories").then(extractData);
+export const getCategories = (init?: NextFetchInit): Promise<LaravelCategory[]> =>
+  apiClient.get<LaravelCategory[]>("/v1/catalog/categories", init).then(extractData);
 
 /**
  * Featured products served by Laravel
@@ -52,7 +52,7 @@ export const getProducts = (params?: {
   sort?: string;
   per_page?: number;
   page?: number;
-}): Promise<{ products: LaravelProduct[]; meta: { current_page: number; last_page: number; per_page: number; total: number } }> => {
+}, init?: NextFetchInit): Promise<{ products: LaravelProduct[]; meta: { current_page: number; last_page: number; per_page: number; total: number } }> => {
   const searchParams = new URLSearchParams();
   if (params?.category_id) searchParams.set("category_id", String(params.category_id));
   if (params?.category_slug) searchParams.set("category_slug", params.category_slug);
@@ -186,6 +186,21 @@ export function adaptProduct(raw: LaravelProduct): Product {
   };
 }
 
+/**
+ * Cache policy for the home route.
+ *
+ * The storefront is intentionally **not** ISR-cached: prices, stock and
+ * promotions can change at any time, and the doc (`docs/home-page.md`) pins
+ * the requirement that home content is fresh on every request. So the three
+ * fetches below pass `cache: "no-store"` explicitly instead of relying on
+ * the `request()` default in `lib/api/client.ts` — the intent is now visible
+ * at the call site and survives any future change to that default.
+ *
+ * `unstable_cache`/`next.revalidate` are deliberately NOT used here; see the
+ * "no ISR" note in the doc.
+ */
+const NO_STORE = { cache: "no-store" as const };
+
 export async function getHomeServerData(): Promise<{
   settings: ShopSettings | null;
   categories: Category[];
@@ -195,9 +210,9 @@ export async function getHomeServerData(): Promise<{
 }> {
   try {
     const [settingsRes, categoriesRes, productsRes] = await Promise.allSettled([
-      getHomepage(),
-      getCategories(),
-      getProducts({ per_page: 100, page: 1 }),
+      getHomepage(NO_STORE),
+      getCategories(NO_STORE),
+      getProducts({ per_page: 100, page: 1 }, NO_STORE),
     ]);
 
     const settings = settingsRes.status === "fulfilled" ? settingsRes.value : null;

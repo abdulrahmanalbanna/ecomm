@@ -53,6 +53,27 @@ export type Product = {
 };
 
 /**
+ * Shape of the catalog data threaded through the home page as props.
+ *
+ * The route (`app/[locale]/(store)/page.tsx`) resolves this server-side from
+ * `getHomeServerData()` and passes it down; `live` marks whether the backend
+ * actually answered (the static catalog is rendered otherwise). `loading`
+ * and `error` are kept in the type for parity with the UI contract but are
+ * always `false`/`null` on the home route, which is fully prop-driven —
+ * there is no client-side catalog refetch here to get out of sync with the
+ * server prerender.
+ */
+export type CatalogState = {
+  categories: Category[];
+  products: Product[];
+  byId: Map<string, Product>;
+  byCategory: Map<string, Product[]>;
+  live: boolean;
+  loading: boolean;
+  error: string | null;
+};
+
+/**
  * Build the PDP href for a catalog product.
  *
  * The backend `GET /v1/catalog/products/{publicId|slug}` route resolves both

@@ -57,9 +57,19 @@ export const REVIEW_FORM_DEFAULTS: ReviewFormValues = {
 /* Quantity selector                                                   */
 /* ------------------------------------------------------------------ */
 
-export const QUANTITY_MIN = 1;
-/** Safety cap so a stray backend `stock` value can't render a 9999-row input. */
-export const QUANTITY_MAX_HARD = 99;
+/**
+ * Bounds + clamping live in `@/lib/quantity` (no `zod` dependency) so the
+ * Zustand cart store can reuse them on the home page without pulling the
+ * ~60 KB zod runtime into that bundle. Re-exported here so the PDP keeps a
+ * single import surface.
+ */
+import {
+  clampQuantity,
+  QUANTITY_MAX_HARD,
+  QUANTITY_MIN,
+  quantityUpperBound,
+} from "@/lib/quantity";
+export { clampQuantity, QUANTITY_MAX_HARD, QUANTITY_MIN, quantityUpperBound };
 
 /**
  * Build a quantity schema bound to the product's real inventory.
@@ -67,19 +77,12 @@ export const QUANTITY_MAX_HARD = 99;
  * @param max units available (or the hard cap, whichever is lower)
  */
 export function quantitySchema(max: number) {
-  const upper = Math.max(QUANTITY_MIN, Math.min(max, QUANTITY_MAX_HARD));
+  const upper = quantityUpperBound(max);
   return z
     .number({ message: "pdp.actions.minQuantity" })
     .int("pdp.actions.minQuantity")
     .min(QUANTITY_MIN, "pdp.actions.minQuantity")
     .max(upper, `pdp.actions.maxQuantity:${upper}`);
-}
-
-/** Clamp a user-supplied quantity into the valid `[1, max]` range. */
-export function clampQuantity(value: number, max: number): number {
-  const upper = Math.max(QUANTITY_MIN, Math.min(max, QUANTITY_MAX_HARD));
-  if (Number.isNaN(value)) return QUANTITY_MIN;
-  return Math.min(Math.max(Math.trunc(value), QUANTITY_MIN), upper);
 }
 
 /* ------------------------------------------------------------------ */

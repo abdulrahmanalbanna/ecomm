@@ -1,8 +1,9 @@
+import type { ReactNode } from "react";
 import type { ShopSettings } from "../api";
 import type { Category, Product } from "../catalog";
 import { Header } from "./Header";
 import { Hero } from "./Hero";
-import { BrandsMarquee, CategoryTiles, CtaBand, ProductRail, ProjectsGrid, TabsSection, WhyUs } from "./HomeSections";
+import { CategoryTiles, ProductRail, TabsSection, WhyUs } from "./HomeSections";
 import { CartDrawer, ChatWidget, Footer, MobileNav, Toasts } from "./Chrome";
 import { CartProductLookupSync } from "./CartProductLookupSync";
 
@@ -12,6 +13,13 @@ export type HomePageProps = {
   products?: Product[];
   byId?: Map<string, Product>;
   byCategory?: Map<string, Product[]>;
+  /**
+   * Static, non-interactive sections (`ProjectsGrid`, `BrandsMarquee`,
+   * `CtaBand`) are rendered as Server Components by the route and passed in
+   * here. They are wrapped in a single `RevealScope` client boundary at the
+   * call site so their (large) JSX never reaches the client bundle.
+   */
+  staticSections?: ReactNode;
 };
 
 export function HomePage({
@@ -20,6 +28,7 @@ export function HomePage({
   products = [],
   byId = new Map(),
   byCategory = new Map(),
+  staticSections = null,
 }: HomePageProps) {
   const catalogState = {
     categories,
@@ -45,11 +54,9 @@ export function HomePage({
             items={byCategory.get(c.id) ?? []}
           />
         ))}
-        <ProjectsGrid />
+        {staticSections}
         <TabsSection byId={byId} />
-        <BrandsMarquee />
         <WhyUs settings={settings} />
-        <CtaBand />
       </main>
       <Footer categories={categories} settings={settings} />
       <CartDrawer byId={byId} settings={settings} />

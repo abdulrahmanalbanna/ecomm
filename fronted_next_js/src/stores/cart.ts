@@ -2,7 +2,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { products as staticProducts, type Product } from "@/features/home/catalog";
-import { clampQuantity, QUANTITY_MAX_HARD } from "@/features/product-detail/schemas";
+import { clampQuantity, QUANTITY_MAX_HARD } from "@/lib/quantity";
 
 export type CartLine = { id: string; qty: number };
 type Toast = { id: number; msg: string };

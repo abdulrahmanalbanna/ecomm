@@ -4,16 +4,15 @@ import Image from "next/image";
 
 import { useEffect, useRef, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
-import { categories as staticCategories, formatPrice, pickLocale, productHref, type Category, type Product } from "../catalog";
+import { categories as staticCategories, formatPrice, pickLocale, productHref, type CatalogState, type Category, type Product } from "../catalog";
 import { useShopSettings } from "../use-settings";
-import type { CatalogState } from "../use-catalog";
 import { branding } from "@/config/branding";
 import { Link } from "@/lib/i18n/navigation";
 import { useCart } from "@/stores/cart";
 import { useMounted } from "@/hooks/use-home";
 import { IconCart, IconChevron, IconPhone, IconSearch, IconUser, IconWhatsApp } from "@/features/home/components/Icons";
 
-export function Logo({ light = false }: { light?: boolean }) {
+export function Logo({ light = false, priority = false }: { light?: boolean; priority?: boolean }) {
   const t = useTranslations("home");
   const locale = useLocale();
   const storeName = locale === "ar" ? branding.name.ar : branding.name.en;
@@ -25,7 +24,10 @@ export function Logo({ light = false }: { light?: boolean }) {
         alt={storeName}
         width={160}
         height={50}
-        priority
+        // `priority` emits a `<link rel="preload" as="image">`. Only the sticky
+        // header logo is above the fold; the footer logo is not, and preloading
+        // it would compete with the LCP hero image for bandwidth.
+        priority={priority}
         className="h-12 w-auto rounded-lg object-contain"
       />
     </a>
@@ -182,7 +184,7 @@ export function Header({ catalog, settings }: { catalog: CatalogState; settings?
         }`}
       >
         <div className="mx-auto flex max-w-7xl items-center gap-4 px-4 py-3 md:gap-6 lg:px-8">
-          <Logo />
+          <Logo priority />
 
           <div className="hidden flex-1 md:block">
             <SearchBox inputId="site-search-desktop" catalog={catalog} />

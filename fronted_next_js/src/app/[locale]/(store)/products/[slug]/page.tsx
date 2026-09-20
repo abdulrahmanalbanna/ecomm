@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { getProductDetailServer, getRelatedServer } from "@/features/product-detail/api";
 import { ProductDetailPage } from "@/features/product-detail/components/ProductDetailPage";
+import { ProductDetailProviders } from "@/features/product-detail/components/ProductDetailProviders";
 import { branding } from "@/config/branding";
 import { getBackendOrigin } from "@/lib/media";
 import type { Locale } from "@/types/locale";
@@ -145,7 +146,9 @@ export default async function Page({ params }: { params: Promise<RouteParams> })
         // to serialize as-is (no user input reaches these fields).
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <ProductDetailPage product={product} initialRelated={related} />
+      <ProductDetailProviders>
+        <ProductDetailPage product={product} initialRelated={related} />
+      </ProductDetailProviders>
     </>
   );
 }
